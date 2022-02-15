@@ -43,9 +43,6 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Raw signal file name and related parameter =======================
-% This is a "default" name of the data file (signal record) to be used in
-% the post-processing mode
-settings.fileName           = '/media/gnss/Ext2TB/JMBF/L1/Lab16Nov_L1schar_Fs5e6_IF20e3.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
