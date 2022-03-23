@@ -51,7 +51,7 @@ if (fid > 0)
 
         %--- Do the acquisition -------------------------------------------
         disp ('   Acquiring satellites...');
-        acqResults = acquisitionDMA(data, settings);
+        acqResults = acquisition(data, settings);
         save(acqPath, 'acqResults')
     end
 
