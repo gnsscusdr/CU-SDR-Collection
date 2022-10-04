@@ -112,10 +112,11 @@ settings.truePosition.E     = nan;
 settings.truePosition.N     = nan;
 settings.truePosition.U     = nan;
 
-%% Plot settings ====================================================
+%% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 1;             % 0 - Off
-                                             % 1 - On
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ========================================================
 settings.c                  = 299792458;   % The speed of light, [m/s]
 settings.startOffset        = 68.802;      % [ms] Initial sign. travel time

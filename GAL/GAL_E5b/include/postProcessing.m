@@ -10,7 +10,7 @@
 
 %--------------------------------------------------------------------------
 %                         CU Multi-GNSS SDR  
-% (C) Updated by Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
+% (C) Updated by Jakob Almqvist, Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
 % Based on the original work by Darius Plausinaitis,Peter Rinder, 
 % Nicolaj Bertelsen and Dennis M. Akos
 %--------------------------------------------------------------------------
@@ -83,21 +83,22 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     samplesPerCode = round(settings.samplingFreq / ...
                        (settings.codeFreqBasis / settings.codeLength));
     
-    % Read data for acquisition. At least 102ms of signal are needed 
-	% for the fine frequency estimation
-    codeLen = max(102,settings.acqNonCohTime+2);
-    % are needed for the fine frequency estimation
+    
+    % At least 42ms of signal are needed for fine frequency estimation
+    codeLen = max(42,settings.acqNonCohTime+2);
+    % Read data for acquisition.
     data  = fread(fid, dataAdaptCoeff*codeLen*samplesPerCode, settings.dataType)';
 
-    if (dataAdaptCoeff == 2)    
-        data1 = data(1:2:end);    
-        data2 = data(2:2:end);    
-        data = data1 + 1i .* data2;    
+    if (dataAdaptCoeff==2)    
+        data1=data(1:2:end);    
+        data2=data(2:2:end);    
+        data=data1 + 1i .* data2;    
     end
 
     %--- Do the acquisition -------------------------------------------
     disp ('   Acquiring satellites...');
     acqResults = acquisition(data, settings);
+    save("acqResults")
 end
 
 %% Initialize channels and prepare for the run ============================
@@ -121,19 +122,27 @@ disp (['   Tracking started at ', datestr(startTime)]);
 
 % Process all channels for given data block
 [trkResults, ~] = tracking(fid, channel, settings);
+save("trkResults")
+% Close the data file
 fclose(fid);
-
 disp(['   Tracking is over (elapsed time ', ...
-                                    datestr(now - startTime, 13), ')'])     
-
-           
+                                    datestr(now - startTime, 13), ')'])                      
 
 %% Calculate navigation solutions =========================================
 disp('   Calculating navigation solutions...');
+
 [navResults, ~] = postNavigation(trkResults, settings);
+save("navResults")
+
+disp('   Processing is complete for this data block');
 disp('Post processing of the signal is over.');
 %% Plot all results ===================================================
 disp ('   Ploting results...');
+
+if settings.plotAcquisition
+    plotAcquisition(acqResults);
+end
+
 if settings.plotTracking
     plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end
@@ -142,6 +151,7 @@ if settings.plotNavigation
     plotNavigation(navResults, settings);
 end
 disp('Post processing of the signal is over.');
+
 else
 % Error while opening the data file.
 error('Unable to read file %s: %s.', settings.fileName, message);

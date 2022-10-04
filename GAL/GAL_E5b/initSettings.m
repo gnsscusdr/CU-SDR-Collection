@@ -56,7 +56,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = 'data.bin';
+settings.fileName           = '/home/jmbf/Documents/datasets/L5_IF20KHz_FS18MHz/B200Ex_1.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -67,8 +67,8 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -0.14e6; % [Hz]4.1304e6
-settings.samplingFreq       = 20e6;             % [Hz]16.3676e6
+settings.IF                 = -20e3; % [Hz]4.1304e6
+settings.samplingFreq       = 18e6;             % [Hz]16.3676e6
 settings.codeFreqBasis      = 10.23e6;      % [Hz]
 
 % Define number of chips in a code period
@@ -80,7 +80,7 @@ settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition. As of June 2020, in-orbit Galileo SVs includes PRNs:
 % [1 2 3 4 5 7 8 9 11 12 13 14 15 18 19 21 22 24 25 26 27 30 31 33 36]
-settings.acqSatelliteList   = [1 2 3 4 5 7 8 9 11 12 13 14 15 18 19 21 22 24 25 26 27 30 31 33 36];
+settings.acqSatelliteList   = [1:36];
 % Band around IF to search for satellite signal. Depends on max Doppler.
 % It is single sideband, so the whole search band is tiwce of it.
 settings.acqSearchBand          = 5000;           % [Hz]
@@ -127,8 +127,9 @@ settings.truePosition.N     = nan;
 settings.truePosition.U     = nan;
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 1;            % 0 - Off
-                                            % 1 - On
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ==============================================================
 
 settings.c                  = 299792458;    % The speed of light, [m/s]

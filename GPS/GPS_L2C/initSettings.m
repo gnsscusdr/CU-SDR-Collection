@@ -1,4 +1,4 @@
-	function settings = initSettings()
+function settings = initSettings()
 %Functions initializes and saves settings. Settings can be edited inside of
 %the function, updated from the command line or updated using a dedicated
 %GUI - "setSettings".  
@@ -56,7 +56,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = 'B200_GPSL2C.bin';
+settings.fileName           = '/home/jmbf/Documents/datasets/L2_20KHz_8MHz.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 
@@ -67,7 +67,7 @@ settings.fileType           = 2;
 
 % Intermediate, sampling
 settings.IF                 = -20e3;   % [Hz]
-settings.samplingFreq       = 5e6;     % [Hz]
+settings.samplingFreq       = 8e6;     % [Hz]
 
 %% Code parameter setting
 % Define number of chips in a code period and code frequencies
@@ -129,10 +129,9 @@ settings.truePosition.U     = nan;
 
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 0;            % 0 - Off
-                                            % 1 - On
-settings.plotAcquisition = 0;
-settings.plotNavigation = 0;
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ==============================================================
 settings.c                  = 299792458;    % The speed of light, [m/s]
 settings.startOffset        = 68.802;       %[ms] Initial sign. travel time

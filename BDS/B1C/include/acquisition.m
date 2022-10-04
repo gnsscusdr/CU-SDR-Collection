@@ -168,7 +168,15 @@ finePhasePoints = (0 : samplesPerCode-1) * 2 * pi * ts;
 
 %--- Input signal power for GLRT statistic calculation --------------------
 sigPower = sqrt(var(sig10PlusXms(1:samplesXmsLen)) * samplesXmsLen);
-
+ %--- Generate carrier wave frequency grid  -----------------------
+initFreq = settings.IF - settings.acqSearchBand;
+% Generate local sine and cosine
+sigCarr = exp(1i*initFreq* phasePoints);
+% "Remove carrier" from the signal
+I1      = real(sigCarr .* sig10PlusXms);
+Q1      = imag(sigCarr .* sig10PlusXms);
+% Convert the baseband signal to frequency domain
+IQfreqDom = fft(I1 + 1i*Q1);
 % Perform search for all listed PRN numbers ...
 fprintf('(');
 for PRN = settings.acqSatelliteList
@@ -190,27 +198,17 @@ for PRN = settings.acqSatelliteList
             zeros(1,len10PlusXms - samplesXmsLen)];
         PilotPriFreqDom = conj(fft(localPilot));
     end
-    
     %--- Make the correlation for whole frequency band (for all freq. bins)
     for frqBinIndex = 1:numberOfFrqBins
-        %--- Generate carrier wave frequency grid  -----------------------
-        frqBins(frqBinIndex) = settings.IF - settings.acqSearchBand + ...
-            settings.acqStep * (frqBinIndex - 1);
-        % Generate local sine and cosine
-        sigCarr = exp(1i*frqBins(frqBinIndex) * phasePoints);
-        % "Remove carrier" from the signal
-        I1      = real(sigCarr .* sig10PlusXms);
-        Q1      = imag(sigCarr .* sig10PlusXms);
-        % Convert the baseband signal to frequency domain
-        IQfreqDom = fft(I1 + 1i*Q1);
+        IQfreqDomShifted = circshift(IQfreqDom, frqBinIndex - 1);
         % Multiplication in the frequency domain (correlation in time domain)
-        convCodeIQ1 = IQfreqDom .* DataPriFreqDom;
+        convCodeIQ1 = IQfreqDomShifted .* DataPriFreqDom;
         % Perform inverse DFT and store correlation results
         results(frqBinIndex, :) = abs(ifft(convCodeIQ1));
         
         % Pilot signal acquisition
         if (settings.pilotACQflag == 1)
-            convCodeIQ1 = IQfreqDom .* PilotPriFreqDom;
+            convCodeIQ1 = IQfreqDomShifted .* PilotPriFreqDom;
             % Non-coherent combining of data and pilot results
             results(frqBinIndex, :) = (results(frqBinIndex, :)* sqrt(11)+ ...
                 abs(ifft(convCodeIQ1))* sqrt(29) )/ sqrt(40);
@@ -224,6 +222,7 @@ for PRN = settings.acqSatelliteList
     
     % Find the correlation peak and the carrier frequency
     [~, frequencyBinIndex] = max(max(results, [], 2));
+    selFreq = initFreq + (frequencyBinIndex -1)*settings.acqStep;
     % Find code phase of the same correlation peak
     [peakSize, codePhase] = max(max(results));
     % Store GLRT statistic
@@ -253,8 +252,7 @@ for PRN = settings.acqSatelliteList
         %--- Search different frequency bins ------------------------------
         for FineBinIndex = 1 : NumOfFineBins
             % Carrier frequencies of the fine frequency bins
-            FineFrqBins(FineBinIndex) = frqBins(frequencyBinIndex) -...
-                settings.acqStep + fineStep * (FineBinIndex - 1);
+            FineFrqBins(FineBinIndex) = selFreq - settings.acqStep + fineStep * (FineBinIndex - 1);
             % Generate local sine and cosine
             sigCarr10cm = exp(1i*FineFrqBins(FineBinIndex) * finePhasePoints);
             FineResult(FineBinIndex) = abs(sum(xCarrier .* sigCarr10cm));

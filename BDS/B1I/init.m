@@ -1,9 +1,11 @@
+
 %--------------------------------------------------------------------------
 %                         CU Multi-GNSS SDR  
-% (C) Updated by Daehee Won, Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
+% (C) Updated by Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
 % Based on the original work by Darius Plausinaitis,Peter Rinder, 
 % Nicolaj Bertelsen and Dennis M. Akos
 %--------------------------------------------------------------------------
+
 %This program is free software; you can redistribute it and/or
 %modify it under the terms of the GNU General Public License
 %as published by the Free Software Foundation; either version 2
@@ -28,27 +30,27 @@
 % $Id: init.m,v 1.14.2.21 2006/08/22 13:46:00 dpl Exp $
 
 %% Clean up the environment first =========================================
-clear; close all; clc;
+% clear all; close all; clc;
 
 format ('compact');
 format ('long', 'g');
 
 %--- Include folders with functions ---------------------------------------
-addpath include              % The software receiver functions
-addpath ('Common')        % Common functions between differnt SDR receivers
-addpath ('IF_Data_Set')   % IF data sets for each SDR receivers
+addpath include               % The software receiver functions
+addpath Common                % Common functions between differnt SDR receivers
+% addpath ('../IF_Data_Set')    % IF data sets for each SDR receivers
 
 %% Print startup ==========================================================
-fprintf(['\n',...
-    'Welcome to:  softGNSS\n\n', ...
-    'An open source GNSS SDR software project initiated by:\n\n', ...
-    '              Danish GPS Center/Aalborg University\n\n', ...
-    'The code was improved by GNSS Laboratory/University of Colorado.\n\n',...
-    'The software receiver softGNSS comes with ABSOLUTELY NO WARRANTY;\n',...
-    'for details please read license details in the file license.txt. This\n',...
-    'is free software, and  you  are  welcome  to  redistribute  it under\n',...
-    'the terms described in the license.\n\n']);
-fprintf('                   -------------------------------\n\n');
+% fprintf(['\n',...
+%     'Welcome to:  softGNSS\n\n', ...
+%     'An open source GNSS SDR software project initiated by:\n\n', ...
+%     '              Danish GPS Center/Aalborg University\n\n', ...
+%     'The code was improved by GNSS Laboratory/University of Colorado.\n\n',...
+%     'The software receiver softGNSS comes with ABSOLUTELY NO WARRANTY;\n',...
+%     'for details please read license details in the file license.txt. This\n',...
+%     'is free software, and  you  are  welcome  to  redistribute  it under\n',...
+%     'the terms described in the license.\n\n']);
+% fprintf('                   -------------------------------\n\n');
 
 %% Initialize constants, settings =========================================
 settings = initSettings();
@@ -72,7 +74,6 @@ gnssStart = input('Enter "1" to initiate GNSS processing or "0" to exit : ');
 
 if (gnssStart == 1)
     disp(' ');
-    %start things rolling...
+    % start things rolling...
     postProcessing
 end
-

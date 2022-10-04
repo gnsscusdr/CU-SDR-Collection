@@ -97,7 +97,7 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     %--- Do the acquisition -------------------------------------------
     disp ('   Acquiring satellites...');
     acqResults = acquisition(data, settings);
-    save(acqPath, "acqResults")
+    save("acqResults")
 end
 
 %% Initialize channels and prepare for the run ============================
@@ -121,6 +121,7 @@ disp (['   Tracking started at ', datestr(startTime)]);
 
 % Process all channels for given data block
 [trkResults, ~] = tracking(fid, channel, settings);
+save("trkResults")
 % Close the data file
 fclose(fid);
 disp(['   Tracking is over (elapsed time ', ...
@@ -128,17 +129,24 @@ disp(['   Tracking is over (elapsed time ', ...
 %% Calculate navigation solutions =========================================
 disp('   Calculating navigation solutions...');
 [navResults, ~] = postNavigation(trkResults, settings);
+save("navResults")
 disp('   Processing is complete for this data block');
 %% Plot all results ===================================================
 disp ('   Ploting results...');
+
+if settings.plotAcquisition
+    plotAcquisition(acqResults);
+end
+
 if settings.plotTracking
-plotTracking(1:settings.numberOfChannels, trkResults, settings);
+    plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end
 
 if settings.plotNavigation
-plotNavigation(navResults, settings);
+    plotNavigation(navResults, settings);
 end
 disp('Post processing of the signal is over.');
+
 else
 % Error while opening the data file.
 error('Unable to read file %s: %s.', settings.fileName, message);
