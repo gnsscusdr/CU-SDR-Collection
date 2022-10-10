@@ -144,7 +144,7 @@ if (fid > 0)
 disp ('   Ploting results...');
 
 if settings.plotAcquisition
-    plotAcquisition(acqResults);
+    plotAcquisition(acqResults, settings);
 end
 
 if settings.plotTracking

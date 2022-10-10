@@ -43,6 +43,7 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Raw signal file name and related parameter =======================
+settings.fileName           = '/media/gnss/Ext2TB/data/L1/B200Ex_1.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
@@ -51,7 +52,7 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 %Intermediate, sampling, code freqency and code length 
 settings.IF                 = -20e3;  %[Hz]
-settings.samplingFreq       = 5e6;              %[Hz]
+settings.samplingFreq       = 18e6;              %[Hz]
 % Front-end bandwidth for calculation of weighting factor in wideband (WB)
 % tracking mode (this is required only for WB tracking mode)
 settings.FEBW   = 27e6;          % [Hz]
@@ -62,7 +63,7 @@ settings.FEBW   = 27e6;          % [Hz]
 settings.msToProcess        = 40000;        %[ms]
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition. In May 2020, BeiDou3 includes PRNs with 19:30,32:46,59,60.
-settings.acqSatelliteList   = [19:30,32:46,59,60]; 
+settings.acqSatelliteList   = [1:69]; 
 % Enable use of pilot channel to do acquisition
 settings.pilotACQflag       = 1;             % 0 - Off; 1 - On
 % Pilot channel tracking mode setting

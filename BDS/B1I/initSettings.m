@@ -38,6 +38,8 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Processing settings ====================================================
+
+settings.fileName           = '/media/gnss/Ext2TB/data/L1I/B200Ex_1.bin';
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
 settings.msToProcess        = 61000; %61000;        %[ms]
@@ -66,8 +68,8 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -44800; %-58000; % -40000, -44800
-settings.samplingFreq       = 22e6; %53e6;          %[Hz]
+settings.IF                 = -20e3; %-58000; % -40000, -44800
+settings.samplingFreq       = 18e6; %53e6;          %[Hz]
 settings.codeFreqBasis      = 2.046e6;           %[Hz] Beidou has 2046 chip length.
 
 % Define number of chips in a code period

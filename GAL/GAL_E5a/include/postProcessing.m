@@ -85,7 +85,7 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     
     
     % At least 42ms of signal are needed for fine frequency estimation
-    codeLen = max(42,settings.acqNonCohTime+2);
+    codeLen = max(102,settings.acqNonCohTime+2);
     % Read data for acquisition.
     data  = fread(fid, dataAdaptCoeff*codeLen*samplesPerCode, settings.dataType)';
 

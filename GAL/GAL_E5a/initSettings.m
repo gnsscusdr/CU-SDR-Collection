@@ -18,7 +18,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '/home/jmbf/Downloads/L5_IF20KHz_FS18MHz(1)/B200Ex_1.bin';
+settings.fileName           = '/media/gnss/Ext2TB/data/L5/B200Ex_1.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -29,8 +29,8 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = 18e3; % [Hz]4.1304e6
-settings.samplingFreq       = 20e6;             % [Hz]16.3676e6
+settings.IF                 = -20e3; % [Hz]4.1304e6
+settings.samplingFreq       = 18e6;   
 settings.codeFreqBasis      = 10.23e6;      % [Hz]
 % Define number of chips in a E5aI/E5aQ tiered code period
 settings.codeLength          = 10230;
@@ -86,9 +86,10 @@ settings.truePosition.N     = nan;
 settings.truePosition.U     = nan;
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking    = 1;            % 0 - Off; 1 - On
-settings.plotAcquisition = 1;
-settings.plotNavigation  = 1; 
+settings.plotTracking       = 0;            % 0 - Off
+                                            % 1 - On
+settings.plotAcquisition       = 0;      
+settings.plotNavigation       = 0;      
 %% Constants ==============================================================
 
 settings.c                  = 299792458;    % The speed of light, [m/s]

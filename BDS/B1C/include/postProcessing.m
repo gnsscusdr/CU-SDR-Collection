@@ -91,7 +91,7 @@ disp('   Processing is complete for this data block');
 disp ('   Ploting results...');
 
 if settings.plotAcquisition
-    plotAcquisition(acqResults);
+    plotAcquisition(acqResults, settings);
 end
 
 if settings.plotTracking

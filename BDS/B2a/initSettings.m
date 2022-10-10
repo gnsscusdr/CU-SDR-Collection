@@ -51,7 +51,7 @@ settings.skipNumberOfBytes     = 0e6;
 %% Raw signal file name and other parameter =========================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-settings.fileName           = 'Beidou_B2a_IF_signal.bin';
+settings.fileName           = '/media/gnss/Ext2TB/data/L5/B200Ex_3.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
@@ -59,8 +59,8 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate, sampling 
-settings.IF                 = -0.05e6;         % [Hz]
-settings.samplingFreq       = 20e6;        % [Hz]
+settings.IF                 = -20e3;         % [Hz]
+settings.samplingFreq       = 18e6;        % [Hz]
 %% Code parameter setting
 % Define number of chips in a code period and code frequencies of B2a
 settings.codeLength           = 10230;         % [chip] 
