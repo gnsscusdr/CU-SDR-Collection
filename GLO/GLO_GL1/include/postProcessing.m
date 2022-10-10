@@ -131,14 +131,21 @@ disp('   Calculating navigation solutions...');
 disp('   Processing is complete for this data block');
 
 %% Plot all results ===================================================
+
 disp ('   Ploting results...');
+
+if settings.plotAcquisition
+    plotAcquisition(acqResults);
+end
+
 if settings.plotTracking
-plotTracking(1:settings.numberOfChannels, trkResults, settings);
+    plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end
 
 if settings.plotNavigation
-plotNavigation(navResults, settings);
+    plotNavigation(navResults, settings);
 end
+disp('Post processing of the signal is over.');
 disp('Post processing of the signal is over.');
 
 else
