@@ -1,4 +1,4 @@
-function [navSolutions] = init(filename)
+
 %--------------------------------------------------------------------------
 %                         CU Multi-GNSS SDR  
 % (C) Updated by Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
@@ -54,7 +54,6 @@ addpath Common                % Common functions between differnt SDR receivers
 
 %% Initialize constants, settings =========================================
 settings = initSettings();
-settings.fileName = filename;
 
 %% Generate plot of raw data and ask if ready to start processing =========
 try
@@ -68,13 +67,13 @@ catch
     return;
 end
     
-% disp('  Raw IF data plotted ')
-% disp('  (run setSettings or change settings in "initSettings.m" to reconfigure)')
-% disp(' ');
-% gnssStart = input('Enter "1" to initiate GNSS processing or "0" to exit : ');
-% 
-% if (gnssStart == 1)
-%     disp(' ');
-    %start things rolling...
+disp('  Raw IF data plotted ')
+disp('  (run setSettings or change settings in "initSettings.m" to reconfigure)')
+disp(' ');
+gnssStart = input('Enter "1" to initiate GNSS processing or "0" to exit : ');
+
+if (gnssStart == 1)
+    disp(' ');
+    % start things rolling...
     postProcessing
-% end
+end

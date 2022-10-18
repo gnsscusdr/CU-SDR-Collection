@@ -7,12 +7,12 @@
 % data block, then postNavigation is called. It calculates pseudoranges
 % and attempts a position solutions. At the end plots are made for that
 % block of data.
+
 %--------------------------------------------------------------------------
-%                         CU Multi-GNSS SDR
-% (C) Developed for BDS B3I SDR by Yafeng Li, Nagaraj C. Shivaramaiah
-% and Dennis M. Akos.
-% Based on the original framework for GPS C/A SDR by Darius Plausinaitis,
-% Peter Rinder, Nicolaj Bertelsen and Dennis M. Akos
+%                         CU Multi-GNSS SDR  
+% (C) Updated by Jakob Almqvist, Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
+% Based on the original work by Darius Plausinaitis,Peter Rinder, 
+% Nicolaj Bertelsen and Dennis M. Akos
 %--------------------------------------------------------------------------
 %This program is free software; you can redistribute it and/or
 %modify it under the terms of the GNU General Public License
@@ -52,6 +52,7 @@
 % pseudoranges and find receiver position.
 %
 % 5) Plot the results.
+
 %% Initialization =========================================================
 disp ('Starting processing...');
 
@@ -82,8 +83,9 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     samplesPerCode = round(settings.samplingFreq / ...
                        (settings.codeFreqBasis / settings.codeLength));
     
-    % At least 27ms of signal are needed for fine frequency estimation
-    codeLen = max(27,settings.acqNonCohTime+2);
+    
+    % At least 42ms of signal are needed for fine frequency estimation
+    codeLen = max(42,settings.acqNonCohTime+2);
     % Read data for acquisition.
     data  = fread(fid, dataAdaptCoeff*codeLen*samplesPerCode, settings.dataType)';
 
@@ -96,7 +98,8 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     %--- Do the acquisition -------------------------------------------
     disp ('   Acquiring satellites...');
     acqResults = acquisition(data, settings);
- end
+    save("acqResults")
+end
 
 %% Initialize channels and prepare for the run ============================
 
@@ -119,25 +122,33 @@ disp (['   Tracking started at ', datestr(startTime)]);
 
 % Process all channels for given data block
 [trkResults, ~] = tracking(fid, channel, settings);
+save("trkResults")
 % Close the data file
 fclose(fid);
-
 disp(['   Tracking is over (elapsed time ', ...
-                                    datestr(now - startTime, 13), ')'])                 
+                                    datestr(now - startTime, 13), ')'])                      
 
 %% Calculate navigation solutions =========================================
 disp('   Calculating navigation solutions...');
-[navResults, ~] = postNavigation(trkResults, settings);
-disp('   Processing is complete for this data block');
 
+[navResults, ~] = postNavigation(trkResults, settings);
+save("navResults")
+
+disp('   Processing is complete for this data block');
+disp('Post processing of the signal is over.');
 %% Plot all results ===================================================
 disp ('   Ploting results...');
+
+if settings.plotAcquisition
+    plotAcquisition(acqResults);
+end
+
 if settings.plotTracking
-plotTracking(1:settings.numberOfChannels, trkResults, settings);
+    plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end
 
 if settings.plotNavigation
-plotNavigation(navResults, settings);
+    plotNavigation(navResults, settings);
 end
 disp('Post processing of the signal is over.');
 
@@ -145,3 +156,4 @@ else
 % Error while opening the data file.
 error('Unable to read file %s: %s.', settings.fileName, message);
 end % if (fid > 0)
+

@@ -38,6 +38,7 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Processing settings ====================================================
+settings.fileName           = '/media/gnss/Ext2TB/data/B3I/B200Ex_1.bin';
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure necessary nav subframes are provided
 settings.msToProcess        = 45000;        %[ms]
@@ -50,9 +51,9 @@ settings.numberOfChannels   = 15;
 settings.skipNumberOfBytes     = 0;
 
 %% Raw signal file name and other parameter ===============================
+settings.fileName           = '/media/gnss/Ext2TB/data/B3/B200Ex_1.bin';
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-settings.fileName           = 'Beidou_B3I_IF_signal.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
@@ -60,8 +61,8 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate and sampling frequencies
-settings.IF                 = -0.52e6;         % [Hz]
-settings.samplingFreq       = 10e6;           % [Hz]
+settings.IF                 = -20e3;         % [Hz]
+settings.samplingFreq       = 18e6;           % [Hz]
 
 %% Code parameter setting =================================================
 % Define number of chips in a code period and code frequencies
@@ -110,10 +111,11 @@ settings.truePosition.E     = nan;
 settings.truePosition.N     = nan;
 settings.truePosition.U     = nan;
 
-%% Plot settings ====================================================
+%% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 1;            % 0 - Off
-                                            % 1 - On
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ========================================================
 % The speed of light 
 settings.c                  = 299792458;    %[m/s]

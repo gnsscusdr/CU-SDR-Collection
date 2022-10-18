@@ -73,16 +73,13 @@ for channelNr = activeChnList
     %     [eph(PRN),subFrameStart(channelNr),TOW(channelNr)] = ...
     %                                   NAVdecoding(trackResults(channelNr).I_P);
     %
-    [teph,subFrameStart(channelNr),TOW(channelNr)] = ...
+    [eph(PRN),subFrameStart(channelNr),TOW(channelNr)] = ...
                                   NAVdecoding(trackResults(channelNr).I_P);
-    cond1 = ~isempty(teph);
+    cond1 = ~isempty(eph(PRN));
     cond2 = 0;
     cond3 = 0;
     if cond1
-        cond2 = teph.flag == 1;
-        if cond2
-            eph(PRN) = teph;
-        end
+        cond2 = eph(PRN).flag == 1;
         cond3 = eph(PRN).E5b_HS ==0;
     end
     %--- Exclude satellite if it does not have the necessary nav data -----

@@ -106,7 +106,6 @@ xcorrLength = (length(tlmXcorrResult) +  1) /2;
 % Find at what index/ms the preambles start
 index = find(abs(tlmXcorrResult(xcorrLength : xcorrLength * 2 - 1)) > 39.99)';
 if isempty(index)
-    eph = [];
     return
 else
     % Analyze detected preamble like patterns ================================

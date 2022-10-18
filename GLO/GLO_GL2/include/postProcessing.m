@@ -134,6 +134,10 @@ disp('   Processing is complete for this data block');
 disp('Post processing of the signal is over.');
 %% Plot all results ===================================================
 disp ('   Ploting results...');
+if settings.plotAcquisition
+    plotAcquisition(acqResults);
+end
+
 if settings.plotTracking
     plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end

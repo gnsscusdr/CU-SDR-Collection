@@ -52,7 +52,7 @@ settings.skipNumberOfBytes     = 0;
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-settings.fileName           = '/media/gnss/Ext2TB/JMBF/L5_Band/B200Fs18MHzIF20KHzExL5_1.bin';
+settings.fileName           = '/home/jmbf/Documents/datasets/L5_IF20KHz_FS18MHz/B200Ex_1.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
@@ -60,8 +60,8 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate, sampling 
-settings.IF                 = -0.05e6;         % [Hz]
-settings.samplingFreq       = 20e6;        % [Hz]
+settings.IF                 = -20e3;         % [Hz]
+settings.samplingFreq       = 18e6;        % [Hz]
 %% Code parameter setting
 % Define number of chips in a code period and code frequencies
 settings.codeLength           = 10230;         % L5 code 
@@ -117,9 +117,9 @@ settings.truePosition.U     = nan;
 
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 0;            
-settings.plotNavigation = 0;
-settings.plotAcquisition = 0;
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ==============================================================
 settings.c                  = 299792458;    % The speed of light, [m/s]
 settings.startOffset        = 68.802;       %[ms] Initial sign. travel time
