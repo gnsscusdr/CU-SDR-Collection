@@ -55,7 +55,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '/media/gnss/Ext2TB/JMBF/L1/Lab16Nov_L1schar_Fs5e6_IF20e3.bin';
+settings.fileName           = '/media/gnss/Ext2TB/data/L5/B200Ex_2.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -66,8 +66,8 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 %Intermediate, sampling, code and L1 frequencies
-settings.IF                 = 20e3;      %[Hz]
-settings.samplingFreq       = 5e6;     %[Hz]
+settings.IF                 = -20e3;      %[Hz]
+settings.samplingFreq       = 18e6;     %[Hz]
 settings.codeFreqBasis      = 1.023e6;      % [Hz]
 
 % Define number of chips in a code period
@@ -125,10 +125,9 @@ settings.truePosition.U     = nan;
 
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 0;            % 0 - Off
-                                            % 1 - On
-settings.plotNavigation       = 0;   
-settings.plotAcquisition       = 0;   
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ==============================================================
 
 settings.c                  = 299792458;    % The speed of light, [m/s]

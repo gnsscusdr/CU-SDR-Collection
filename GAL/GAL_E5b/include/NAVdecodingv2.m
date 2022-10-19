@@ -219,7 +219,7 @@ for ind = 1:size(index) % For each occurrence
   
                     end
                     %--- Update TOW when read
-                    if ~isempty(eph.TOW)
+                    if isempty(eph.TOW)
                         % Correct TOW to time for first page part 
                         TOW = eph.TOW - (pagecnt*2);
                         % Reset parameter in case it has to be re-read
@@ -234,7 +234,7 @@ for ind = 1:size(index) % For each occurrence
              end % if CRC is OK ...
         else 
             % Not enough symbols to decode this page.
-            print('Not enough symbols to decode current page.')
+            disp('Not enough symbols to decode current page.')
         end % If enough symbols to decode page
 end % For loop iterating sync patterns
    

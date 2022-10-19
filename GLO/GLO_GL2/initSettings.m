@@ -58,7 +58,7 @@ settings.skipNumberOfSamples     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = 'data.bin';
+settings.fileName           = '/home/gnss/Downloads/GL2_IF20KHz_FS12MHz/B200Ex_1.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -75,7 +75,7 @@ settings.freqSpacing         = 437.5e3;
 % Intermediate, sampling and code frequencies
 
 settings.IF                 = 0;      %[Hz]1602e6-1590e6
-settings.samplingFreq       = 10e6;               %[Hz]
+settings.samplingFreq       = 12e6;               %[Hz]
 settings.codeFreqBasis      = 0.511e6;            %[Hz]
 
 % Define number of chips in a code period
@@ -131,8 +131,9 @@ settings.truePosition.U     = nan;
 
 %% Plot settings ==========================================================
 % Enable/disable plotting of the tracking results for each channel
-settings.plotTracking       = 1;            % 0 - Off
-                                            % 1 - On
+settings.plotTracking    = 1;            % 0 - Off; 1 - On
+settings.plotAcquisition = 1;
+settings.plotNavigation  = 1;
 %% Constants ==============================================================
 settings.c                  = 299792458;    % The speed of light, [m/s]
 settings.startOffset        = 65;           %[ms] Initial sign. travel time

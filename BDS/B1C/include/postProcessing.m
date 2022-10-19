@@ -42,7 +42,8 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     %--- Do the acquisition -------------------------------------------
     disp ('   Acquiring satellites...');
     % Normal acquisition
-    acqResults = acquisitionCS(data, settings);        
+    acqResults = acquisition(data, settings); 
+    save("acqResults")
 end
 
 %% Initialize channels and prepare for the run ============================
@@ -72,6 +73,7 @@ elseif settings.pilotTRKflag == 2  % Wideband tracking mode
     % Tracking with Matlab correlator
     [trkResults, ~] = WB_tracking(fid, channel, settings);
 end
+save("trkResults")
 % Close the data file
 fclose(fid);
 
@@ -82,10 +84,16 @@ disp(['   Tracking is over (elapsed time ', ...
 %% Calculate navigation solutions =========================================
 disp('   Calculating navigation solutions...');
 [navResults, ~] = postNavigation(trkResults, settings);
+save("navResults")
 disp('   Processing is complete for this data block');
 
 %% Plot all results ===================================================
 disp ('   Ploting results...');
+
+if settings.plotAcquisition
+    plotAcquisition(acqResults, settings);
+end
+
 if settings.plotTracking
     plotTracking(1:settings.numberOfChannels, trkResults, settings);
 end
@@ -94,6 +102,7 @@ if settings.plotNavigation
     plotNavigation(navResults, settings);
 end
 disp('Post processing of the signal is over.');
+
 
 else
 % Error while opening the data file.
