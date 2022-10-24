@@ -66,9 +66,9 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 %Intermediate, sampling, code and L1 frequencies
-settings.IF                 = -20e3;      %[Hz]
-settings.samplingFreq       = 18e6;     %[Hz]
-settings.codeFreqBasis      = 1.023e6;      % [Hz]
+settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.samplingFreq       = 18e6;         %[Hz]
+settings.codeFreqBasis      = 1.023e6;      %[Hz]
 
 % Define number of chips in a code period
 settings.codeLength          = 4092;

@@ -51,8 +51,8 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 %Intermediate, sampling, code freqency and code length 
-settings.IF                 = -20e3;  %[Hz]
-settings.samplingFreq       = 18e6;              %[Hz]
+settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.samplingFreq       = 18e6;         %[Hz]
 % Front-end bandwidth for calculation of weighting factor in wideband (WB)
 % tracking mode (this is required only for WB tracking mode)
 settings.FEBW   = 27e6;          % [Hz]

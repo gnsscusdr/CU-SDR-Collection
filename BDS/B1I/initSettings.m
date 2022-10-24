@@ -68,9 +68,9 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -20e3; %-58000; % -40000, -44800
-settings.samplingFreq       = 18e6; %53e6;          %[Hz]
-settings.codeFreqBasis      = 2.046e6;           %[Hz] Beidou has 2046 chip length.
+settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.samplingFreq       = 18e6;         %[Hz]
+settings.codeFreqBasis      = 2.046e6;      %[Hz] Beidou has 2046 chip length.
 
 % Define number of chips in a code period
 settings.codeLength         = 2046; % Beidou has 2046 chip length.

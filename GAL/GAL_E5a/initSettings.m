@@ -29,8 +29,8 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -20e3; % [Hz]4.1304e6
-settings.samplingFreq       = 18e6;   
+settings.IF                 = -20e3;        % [Hz] (Invert sign here for proper acquisition)
+settings.samplingFreq       = 18e6;         % [Hz]  
 settings.codeFreqBasis      = 10.23e6;      % [Hz]
 % Define number of chips in a E5aI/E5aQ tiered code period
 settings.codeLength          = 10230;

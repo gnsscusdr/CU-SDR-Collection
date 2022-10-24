@@ -61,7 +61,7 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate and sampling frequencies
-settings.IF                 = -20e3;         % [Hz]
+settings.IF                 = -20e3;          % [Hz] (Invert sign here for proper acquisition)
 settings.samplingFreq       = 18e6;           % [Hz]
 
 %% Code parameter setting =================================================
