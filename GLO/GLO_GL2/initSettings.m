@@ -58,7 +58,7 @@ settings.skipNumberOfSamples     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '/home/gnss/Downloads/GL2_IF20KHz_FS12MHz/B200Ex_1.bin';
+settings.fileName           = '../../../dataSets/GL2_IF0KHz_FS12MHz.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -74,7 +74,7 @@ settings.freqSpacing         = 437.5e3;
 
 % Intermediate, sampling and code frequencies
 
-settings.IF                 = 0;      %[Hz]1602e6-1590e6
+settings.IF                 = 0;      %[Hz]
 settings.samplingFreq       = 12e6;               %[Hz]
 settings.codeFreqBasis      = 0.511e6;            %[Hz]
 

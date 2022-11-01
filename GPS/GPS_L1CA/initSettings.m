@@ -55,7 +55,7 @@ settings.skipNumberOfBytes     = 0;
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-settings.fileName           = '/home/jmbf/Documents/datasets/L1_IF20Khz_FS18MHz.bin';
+settings.fileName           = '../../../dataSets/L1_IF20KHz_FS18MHz.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';  
 

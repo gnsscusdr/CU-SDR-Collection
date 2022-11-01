@@ -39,7 +39,7 @@ function settings = initSettings()
 
 %% Processing settings ====================================================
 
-settings.fileName           = '/media/gnss/Ext2TB/data/L1I/B200Ex_1.bin';
+settings.fileName           = '../../../dataSets/L1I_IF20KHz_FS18MHz.bin';
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
 settings.msToProcess        = 61000; %61000;        %[ms]

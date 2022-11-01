@@ -56,7 +56,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '/home/jmbf/Documents/datasets/L2_20KHz_8MHz.bin';
+settings.fileName           = '../../../dataSets/L2_IF20KHz_FS8MHz.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 

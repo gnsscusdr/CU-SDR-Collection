@@ -38,7 +38,6 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Processing settings ====================================================
-settings.fileName           = '/media/gnss/Ext2TB/data/B3I/B200Ex_1.bin';
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure necessary nav subframes are provided
 settings.msToProcess        = 45000;        %[ms]
@@ -51,7 +50,7 @@ settings.numberOfChannels   = 15;
 settings.skipNumberOfBytes     = 0;
 
 %% Raw signal file name and other parameter ===============================
-settings.fileName           = '/media/gnss/Ext2TB/data/B3/B200Ex_1.bin';
+settings.fileName           = '../../../dataSets/B3I_IF20KHz_FS18MHz.bin';
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 % Data type used to store one sample

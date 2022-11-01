@@ -55,7 +55,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '/media/gnss/Ext2TB/data/L5/B200Ex_2.bin';
+settings.fileName           = '../../../dataSets/L1_IF20KHz_FS18MHz.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -66,7 +66,7 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 %Intermediate, sampling, code and L1 frequencies
-settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;        %[Hz] 
 settings.samplingFreq       = 18e6;         %[Hz]
 settings.codeFreqBasis      = 1.023e6;      %[Hz]
 
