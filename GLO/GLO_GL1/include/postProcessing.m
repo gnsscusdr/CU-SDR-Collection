@@ -146,7 +146,7 @@ if settings.plotNavigation
     plotNavigation(navResults, settings);
 end
 disp('Post processing of the signal is over.');
-disp('Post processing of the signal is over.');
+
 
 else
 % Error while opening the data file.
