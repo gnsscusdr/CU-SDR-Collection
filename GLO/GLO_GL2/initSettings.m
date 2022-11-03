@@ -74,7 +74,8 @@ settings.freqSpacing         = 437.5e3;
 
 % Intermediate, sampling and code frequencies
 
-settings.IF                 = 0;      %[Hz]
+settings.IF                 = 0;      %[Hz] Nominal IF with respect to channel 0
+                                      %Invert sign here for proper acquisition
 settings.samplingFreq       = 12e6;               %[Hz]
 settings.codeFreqBasis      = 0.511e6;            %[Hz]
 
