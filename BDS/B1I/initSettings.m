@@ -39,10 +39,10 @@ function settings = initSettings()
 
 %% Processing settings ====================================================
 
-settings.fileName           = '../../../dataSets/L1I_IF20KHz_FS18MHz.bin';
+settings.fileName           = '../../../L1I_IF20KHz_FS18MHz.bin';
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 61000; %61000;        %[ms]
+settings.msToProcess        = 60000; %61000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 12;
@@ -68,7 +68,7 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;         %[Hz]
 settings.samplingFreq       = 18e6;         %[Hz]
 settings.codeFreqBasis      = 2.046e6;      %[Hz] Beidou has 2046 chip length.
 

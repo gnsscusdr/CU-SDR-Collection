@@ -84,8 +84,8 @@ for channelNr = activeChnList
                                   CNAVdecoding(trackResults(channelNr).I_P); %#ok<AGROW>
 
     %--- Exclude satellite if it does not have the necessary cnav data ------
-    if (eph(PRN).idValid(1) ~= 10 || eph(PRN).idValid(2) ~= 11 ...
-        || ~sum(eph(PRN).idValid(3:10) == (30:37)) || eph(PRN).health~=0 )
+    if (eph(PRN).idValid(1) ~= 10 || (eph(PRN).idValid(2) ~= 11) ...
+        || (~sum(eph(PRN).idValid(3:10) == (30:37))) || eph(PRN).health~=0 )
 
         %--- Exclude channel from the list ----------------------------------
         activeChnList = setdiff(activeChnList, channelNr);
@@ -223,7 +223,8 @@ for currMeasNr = 1:measNrSum
         % Receiver position in ECEF
         navSolutions.X(currMeasNr)  = xyzdt(1);
         navSolutions.Y(currMeasNr)  = xyzdt(2);
-        navSolutions.Z(currMeasNr)  = xyzdt(3);       
+        navSolutions.Z(currMeasNr)  = xyzdt(3);
+
 		% For first calculation of solution, clock error will be set 
         % to be zero
         if (currMeasNr == 1)

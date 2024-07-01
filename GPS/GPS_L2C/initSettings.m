@@ -41,7 +41,7 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 48000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 61000;        %[ms]
+settings.msToProcess        = 60000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 12;
@@ -56,7 +56,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '../../../dataSets/L2_IF20KHz_FS8MHz.bin';
+settings.fileName           = '../../../L2_IF20KHz_FS8MHz.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 
@@ -66,7 +66,7 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling
-settings.IF                 = -20e3;   % [Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;     % [Hz]
 settings.samplingFreq       = 8e6;     % [Hz]
 
 %% Code parameter setting
@@ -104,11 +104,11 @@ settings.dllNoiseBandwidth       = 4;        %[Hz]
 settings.dllCorrelatorSpacing    = 0.25;      %[chips]
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       = 15;       %[Hz]
+settings.pllNoiseBandwidth       = 10;       %[Hz]
 % Integration time for DLL and PLL
 settings.intTime                 = 0.02;     %[s]
 % Enable/dissable use of pilot channel for tracking
-settings.pilotTRKflag            = 1;        % 0 - Off
+settings.pilotTRKflag            = 0;        % 0 - Off
                                              % 1 - On
 
 %% Navigation solution settings ===========================================
@@ -116,7 +116,7 @@ settings.pilotTRKflag            = 1;        % 0 - Off
 settings.navSolPeriod       = 500;          %[ms]
 
 % Elevation mask to exclude signals from satellites at low elevation
-settings.elevationMask      = 10;            %[degrees 0 - 90]
+settings.elevationMask      = 5;            %[degrees 0 - 90]
 % Enable/dissable use of tropospheric correction
 settings.useTropCorr        = 1;            % 0 - Off
                                             % 1 - On

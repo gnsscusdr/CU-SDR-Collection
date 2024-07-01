@@ -49,7 +49,7 @@ function acqResults = acquisition(longSignal, settings)
 % to speed up the acquisition. This is user selectable.
 if (settings.samplingFreq > settings.resamplingThreshold && ...
         settings.resamplingflag == 1)
-    
+
     %--- Filiter out signal power outside the main lobe of CM code ------------------
     fs = settings.samplingFreq;
     IF = settings.IF;
@@ -63,41 +63,41 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     b  = fir1(700,wp);
     % Filter operation
     longSignal = filtfilt(b,1,longSignal);
-    
+
     % --- Find resample frequency -----------------------------------------
     % Refer to bandpass sampling theorem(Yi-Ran Sun,Generalized Bandpass
     % Sampling Receivers for Software Defined Radio)
-    
+
     % Upper boundary frequency of the bandpass IF signal
     fu = settings.IF + BW/2;
-    
+
     % Lower freq. of the acceptable sampling Freq. range
     n = floor(fu/BW);
     if (n<1)
         n = 1;
     end
     lowerFreq = 2*fu/n;
-    
+
     % Lower boundary frequency of the bandpass IF signal
     fl = settings.IF - BW/2;
-    
+
     % Upper boundary frequency of the acceptable sampling Freq. range
     if(n>1)
         upperFreq = 2*fl/(n-1);
     else
         upperFreq = lowerFreq;
     end
-    
+
     % Save orignal Freq. for later use
     oldFreq = settings.samplingFreq;
-    
+
     % Take the center of the acceptable sampling Freq. range as
     % resampling frequency. As settings are used to generate local
     % CM code samples, so assign the resampling freq. to settings.
     % This can not change the settings.samplingFreq outside this
     % acquisition function.
     settings.samplingFreq = ceil((lowerFreq + upperFreq)/2);
-    
+
     %--- Downsample input IF signal ---------------------------------------
     % Signal length after resampling
     signalLen = floor((length(longSignal)-1) /oldFreq * settings.samplingFreq);
@@ -106,14 +106,14 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     index(1) = 1;
     % Resampled signal
     longSignal = longSignal(index);
-    
+
     % For later use
     oldIF = settings.IF;
-    
+
     % Resampling is equivalent to down-converting the original IF by integer
     % times of resampling freq.. So the IF after resampling is equivalent to:
     settings.IF = rem(settings.IF,settings.samplingFreq);
-    
+
 end % resampling input IF signals
 
 %% Initialization ===================================================
@@ -162,38 +162,42 @@ sigPower = sqrt(var(longSignal(1:samplesPerCode)) * samplesPerCode);
 % Perform search for all listed PRN numbers ...
 fprintf('(');
 for PRN = settings.acqSatelliteList
-    
+
     %% Coarse acquisition ===========================================
-    
+
     % Generate all E5aI+E5aQ primary codes and sample them according to the sampling freq.
     E5aICodesTable = makeE5aITable(PRN,settings);
     E5aQCodesTable = makeE5aQTable(PRN,settings);
+
     % generate local code duplicate to do correlate
     localE5aICode = [E5aICodesTable, zeros(1,samplesPerCode)];
     localE5aQCode = [E5aQCodesTable, zeros(1,samplesPerCode)];
+
     % Search results of all frequency bins and code shifts (for one satellite)
     results = zeros(numberOfFreqBins, samplesPerCode*2);
-    
+
     %--- Perform DFT of PRN code ------------------------------------------
     E5aICodeFreqDom = conj(fft(localE5aICode));
     E5aQCodeFreqDom = conj(fft(localE5aQCode));
     %--- Make the correlation for all frequency bins
     for freqBinIndex = 1:numberOfFreqBins
-        
+
         %--- Generate carrier wave frequency grid  -----------------------
-        coarseFreqBin(freqBinIndex) = settings.IF - settings.acqSearchBand + ...
+        coarseFreqBin(freqBinIndex) = settings.IF + settings.acqSearchBand - ...
             settings.acqSearchStep * (freqBinIndex - 1);
         %--- Generate local sine and cosine -------------------------------
-        sigCarr = exp(1i * coarseFreqBin(freqBinIndex) * phasePoints);
-        
+        sigCarr = exp(-1i * coarseFreqBin(freqBinIndex) * phasePoints);
+
         %--- Do correlation -----------------------------------------------
         for nonCohIndex = 1: settings.acqNonCohTime
             % Take 2ms vectors of input data to do correlation
             signal = longSignal((nonCohIndex - 1) * samplesPerCode + ...
                 1 : (nonCohIndex + 1) * samplesPerCode);
+
             % "Remove carrier" from the signal
             I      = real(sigCarr .* signal);
             Q      = imag(sigCarr .* signal);
+
             %--- Convert the baseband signal to frequency domain ----------
             IQfreqDom = fft(I + 1i*Q);
             %--- Multiplication in the frequency domain (correlation in time
@@ -206,7 +210,7 @@ for PRN = settings.acqSatelliteList
             results(freqBinIndex, :) = results(freqBinIndex, :) + cohRresult;
         end % nonCohIndex = 1: settings.acqNonCohTime
     end % freqBinIndex = 1:numberOfFreqBins
-    
+
     %% Look for correlation peaks for coarse acquisition ============
     % Find the correlation peak and the carrier frequency
     [~, acqCoarseBin] = max(max(results, [], 2));
@@ -214,43 +218,43 @@ for PRN = settings.acqSatelliteList
     [peakSize, codePhase] = max(max(results));
     % Store GLRT statistic
     acqResults.peakMetric(PRN) = peakSize/sigPower/settings.acqNonCohTime;
-    
+
     %% Fine resolution frequency search =============================
     % If the result is above threshold, then there is a signal ...
     if acqResults.peakMetric(PRN) > settings.acqThreshold
         %--- Indicate PRN number of the detected signal -------------------
         fprintf('%02d ', PRN);
-        
+
         %--- Initialize arrays to speed up the code -----------------------
         % Antipodal form of E5aQ secondary code
         secondCode = generateE5aQ_secondary(PRN);
         %--- Generate 100msec long E5aQ primary codes sequence for given PRN
         E5aQCode = generateE5aQcode(PRN,1);
-        
+
         codeValueIndex = floor((ts * (1:100*samplesPerCode)) / ...
             (1/settings.codeFreqBasis));
         longE5aQCode = E5aQCode((rem(codeValueIndex, settings.codeLength) + 1));
         % 100ms incoming signal
         sig100ms = longSignal(codePhase:codePhase + 100*samplesPerCode -1);
-        
+
         %--- Search different frequency bins ------------------------------
         for FineBinIndex = 1 : NumOfFineBins
-            
+
             % Carrier frequencies of the frequency bins
-            FineFreqBins(FineBinIndex) = coarseFreqBin(acqCoarseBin) -...
-                settings.acqSearchStep/2 + 5 * (FineBinIndex - 1);
+            FineFreqBins(FineBinIndex) = coarseFreqBin(acqCoarseBin) + ...
+                settings.acqSearchStep/2 - 5 * (FineBinIndex - 1);
             % Generate local sine and cosine
-            sigCarr100ms = exp(1i*FineFreqBins(FineBinIndex) * finePhasePoints);
+            sigCarr100ms = exp(-1i*FineFreqBins(FineBinIndex) * finePhasePoints);
             % Wipe off E5aQ code and carrier from incoming signals to
             % produce baseband signal
             basebandSig = longE5aQCode .* sigCarr100ms .* sig100ms;
-            
+
             % Coherent integration for each code
             for index = 1:100
                 sumPerCode(index) = sum( basebandSig( samplesPerCode*(index-1)+1:...
                     samplesPerCode*index ) );
             end
-            
+
             % Initialize maximal power for 10 NH code combiniations
             maxPower = 0;
             %--- Search different E5aQ secondary code combinations --------
@@ -262,17 +266,17 @@ for PRN = settings.acqSatelliteList
                 % Shift NH code for next  combiniation
                 secondCode = circshift(secondCode',1)';
             end % Search different NH code combiniations
-            
+
             FineResult(FineBinIndex) = maxPower;
         end % FineBinIndex = 1 : NumOfFineBins
-        
+
         % Find the fine carrier freq. -------------------------------------
         % Corresponding to the largest noncoherent power
         [~,maxFinBin] = max(FineResult);
         acqResults.carrFreq(PRN) = FineFreqBins(maxFinBin);
         % Save code phase acquisition result
         acqResults.codePhase(PRN) = codePhase;
-        
+
         %signal found, if IF = 0 just change to 1 Hz to allow processing
         if(acqResults.carrFreq(PRN) == 0)
             acqResults.carrFreq(PRN) = 1;
@@ -283,10 +287,10 @@ for PRN = settings.acqSatelliteList
             % Find code phase
             acqResults.codePhase(PRN) = floor((codePhase - 1)/ ...
                 settings.samplingFreq * oldFreq)+1;
-            
+
             % Doppler frequency
             doppler = acqResults.carrFreq(PRN) - settings.IF;
-            
+
             % Carrier freq. corresponding to orignal sampling freq
             acqResults.carrFreq(PRN) = doppler + oldIF;
         end
@@ -294,7 +298,7 @@ for PRN = settings.acqSatelliteList
         %--- No signal with this PRN --------------------------------------
         fprintf('. ');
     end   % if (peakSize/secondPeakSize) > settings.acqThreshold
-    
+
 end    % for PRN = satelliteList
 
 %=== Acquisition is over ==================================================

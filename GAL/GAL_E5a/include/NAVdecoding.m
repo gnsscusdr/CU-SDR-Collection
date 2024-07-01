@@ -1,4 +1,4 @@
-function [eph, firstSubFrame] = NAVdecodingv2(I_P,settings)
+function [eph, firstSubFrame] = NAVdecoding(I_P,settings)
 
     % findPreambles finds the first preamble occurrence in the bit stream of
     % each channel. The preamble is verified by check of the spacing between
@@ -117,7 +117,7 @@ function [eph, firstSubFrame] = NAVdecodingv2(I_P,settings)
     wordType = 0;
     validCounter = 0;
     % Analyze detected preamble like patterns ================================
-    for ind = 1:size(index) % For each occurrence
+    for ind = 1:height(index) % For each occurrence
         % Check there are enough bits.
         if (settings.msToProcess - index(ind)) < 10e3 
             fprintf('    Not enough symbols to demodulate navData!', ind)

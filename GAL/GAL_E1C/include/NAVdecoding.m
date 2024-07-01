@@ -97,7 +97,7 @@ index = find(...
     round(abs(tlmXcorrResult(xcorrLength : xcorrLength * 2 - 1))) >= 9.99)';
 
 % Analyze detected preamble like patterns ================================
-for ind = 1:size(index) % For each occurrence
+for ind = 1:height(index) % For each occurrence
     
     % Check distance to all other possible sync patterns for current start
     index2 = index - index(ind);

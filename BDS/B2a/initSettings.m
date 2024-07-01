@@ -51,7 +51,7 @@ settings.skipNumberOfBytes     = 0e6;
 %% Raw signal file name and other parameter =========================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-settings.fileName           = '../../../dataSets/L5_IF20KHz_FS18MHz.bin';
+settings.fileName           = '../../../L5_IF20KHz_FS18MHz.bin';
 % Data type used to store one sample
 settings.dataType           = 'schar';
 % File Types
@@ -59,7 +59,7 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate, sampling 
-settings.IF                 = -20e3;       % [Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;        % [Hz]
 settings.samplingFreq       = 18e6;        % [Hz]
 %% Code parameter setting
 % Define number of chips in a code period and code frequencies of B2a
@@ -95,7 +95,7 @@ settings.pllNoiseBandwidth       = 15;         % [Hz]
 % Integration time for DLL and PLL 
 settings.intTime                 = 0.001;      % [s]
 % Enable/disable use of pilot channel for tracking
-settings.pilotTRKflag        = 1;              % 0 - Off
+settings.pilotTRKflag        = 0;              % 0 - Off
                                                % 1 - On
 %% Navigation solution settings =====================================
 % Period for calculating pseudoranges and position

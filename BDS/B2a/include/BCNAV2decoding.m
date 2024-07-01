@@ -51,7 +51,7 @@ function [eph, firstSubFrame,TOW] = BCNAV2decoding(I_P_InputBits)
 % This is in order to make sure variable 'eph' for each SV has a similar
 % structure when only one or even none of the three requisite messages
 % is decoded for a given PRN.
-eph = eph_structure_init();
+eph = eph_structure_init;
 
 % Starting positions of the first message in the input stream trackResults.I_P
 firstSubFrame = inf;
@@ -100,7 +100,7 @@ index = find(abs(tlmXcorrResult(xcorrLength : xcorrLength * 2 - 1)) > 115)';
 crcDet = comm.CRCDetector([24 23 18 17 14 11 10 7 6 5 4 3 1 0]);
 
 %% B-CNAV2 decoding =================================================
-for i = 1:size(index) % For each occurrence
+for i = 1:height(index) % For each occurrence
     % Ensure the search for i has the number of a whole message(300)
     if ((length(bits) - index(i) +1) >= 600*5 )
         % Search every possible preamble pattern. This can allow decoding

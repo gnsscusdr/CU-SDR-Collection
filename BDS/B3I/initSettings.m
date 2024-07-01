@@ -40,7 +40,7 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure necessary nav subframes are provided
-settings.msToProcess        = 45000;        %[ms]
+settings.msToProcess        = 60000;        %[ms]
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 15;
 % Move the starting point of processing. Can be used to start the signal
@@ -50,7 +50,7 @@ settings.numberOfChannels   = 15;
 settings.skipNumberOfBytes     = 0;
 
 %% Raw signal file name and other parameter ===============================
-settings.fileName           = '../../../dataSets/B3I_IF20KHz_FS18MHz.bin';
+settings.fileName           = '../../../B3I_IF20KHz_FS18MHz.bin';
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 % Data type used to store one sample
@@ -60,7 +60,7 @@ settings.dataType           = 'schar';
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 % Intermediate and sampling frequencies
-settings.IF                 = -20e3;          % [Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;           % [Hz]
 settings.samplingFreq       = 18e6;           % [Hz]
 
 %% Code parameter setting =================================================

@@ -55,7 +55,7 @@ function acqResults = acquisition(longSignal, settings)
 % to speed up the acquisition. This is user selectable.
 if (settings.samplingFreq > settings.resamplingThreshold && ...
         settings.resamplingflag == 1)
-    
+
     %--- Filiter out signal power outside the main lobe of CM code --------
     fs = settings.samplingFreq;
     IF = settings.IF;
@@ -69,41 +69,41 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     b  = fir1(700,wp);
     % Filter operation
     longSignal = filtfilt(b,1,longSignal);
-    
+
     % --- Find resample frequency -----------------------------------------
     % Refer to bandpass sampling theorem(Yi-Ran Sun,Generalized Bandpass
     % Sampling Receivers for Software Defined Radio)
-    
+
     % Upper boundary frequency of the bandpass IF signal
     fu = settings.IF + BW/2;
-    
+
     % Lower freq. of the acceptable sampling Freq. range
     n = floor(fu/BW);
     if (n<1)
         n = 1;
     end
     lowerFreq = 2*fu/n;
-    
+
     % Lower boundary frequency of the bandpass IF signal
     fl = settings.IF - BW/2;
-    
+
     % Upper boundary frequency of the acceptable sampling Freq. range
     if(n>1)
         upperFreq = 2*fl/(n-1);
     else
         upperFreq = lowerFreq;
     end
-    
+
     % Save orignal Freq. for later use
     oldFreq = settings.samplingFreq;
-    
+
     % Take the center of the acceptable sampling Freq. range as
     % resampling frequency. As settings are used to generate local
     % CM code samples, so assign the resampling freq. to settings.
     % This can not change the settings.samplingFreq outside this
     % acquisition function.
     settings.samplingFreq = ceil((lowerFreq + upperFreq)/2);
-    
+
     %--- Downsample input IF signal ---------------------------------------
     % Signal length after resampling
     signalLen = floor((length(longSignal)-1) /oldFreq * settings.samplingFreq);
@@ -112,14 +112,14 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     index(1) = 1;
     % Resampled signal
     longSignal = longSignal(index);
-    
+
     % Foe latter use
     oldIF = settings.IF;
-    
+
     % Resampling is equivalent to down-converting the original IF by integer
     % times of resampling freq.. So the IF after resampling is equivalent to:
     settings.IF = rem(settings.IF,settings.samplingFreq);
-    
+
 end % resampling input IF signals
 
 %% Acquisition initialization =======================================
@@ -168,10 +168,10 @@ finePhasePoints = (0 : samplesPerCode-1) * 2 * pi * ts;
 
 %--- Input signal power for GLRT statistic calculation --------------------
 sigPower = sqrt(var(sig10PlusXms(1:samplesXmsLen)) * samplesXmsLen);
- %--- Generate carrier wave frequency grid  -----------------------
-initFreq = settings.IF - settings.acqSearchBand;
+%--- Generate carrier wave frequency grid  -----------------------
+initFreq = settings.IF + settings.acqSearchBand;
 % Generate local sine and cosine
-sigCarr = exp(1i*initFreq* phasePoints);
+sigCarr = exp(-1i*initFreq* phasePoints);
 % "Remove carrier" from the signal
 I1      = real(sigCarr .* sig10PlusXms);
 Q1      = imag(sigCarr .* sig10PlusXms);
@@ -181,16 +181,16 @@ IQfreqDom = fft(I1 + 1i*Q1);
 fprintf('(');
 for PRN = settings.acqSatelliteList
     %% Coarse acquisition ===========================================
-    
+
     % Generate B1C data codes and sample them according to the sampling freq.
     DataPriTable = makeDataTable(settings,PRN);
     % generate local code duplicate to do correlate
     localData = [DataPriTable(1:samplesXmsLen) ...
         zeros(1,len10PlusXms - samplesXmsLen)];
-    
+
     % Perform DFT of B1C data code
     DataPriFreqDom = conj(fft(localData));
-    
+
     % Pilot signal acquisition
     if (settings.pilotACQflag == 1)
         PilotPriTable = makePilotTable(settings,PRN);
@@ -205,7 +205,7 @@ for PRN = settings.acqSatelliteList
         convCodeIQ1 = IQfreqDomShifted .* DataPriFreqDom;
         % Perform inverse DFT and store correlation results
         results(frqBinIndex, :) = abs(ifft(convCodeIQ1));
-        
+
         % Pilot signal acquisition
         if (settings.pilotACQflag == 1)
             convCodeIQ1 = IQfreqDomShifted .* PilotPriFreqDom;
@@ -213,27 +213,27 @@ for PRN = settings.acqSatelliteList
             results(frqBinIndex, :) = (results(frqBinIndex, :)* sqrt(11)+ ...
                 abs(ifft(convCodeIQ1))* sqrt(29) )/ sqrt(40);
         end
-        
+
     end % frqBinIndex = 1:numberOfFrqBins
-    
+
     %% Look for correlation peaks in the results ====================
     % Find the highest peak and compare it to the second highest peak
     % The second peak is chosen not closer than 1 chip to the highest peak
-    
+
     % Find the correlation peak and the carrier frequency
     [~, frequencyBinIndex] = max(max(results, [], 2));
-    selFreq = initFreq + (frequencyBinIndex -1)*settings.acqStep;
+    selFreq = initFreq - (frequencyBinIndex -1)*settings.acqStep;
     % Find code phase of the same correlation peak
     [peakSize, codePhase] = max(max(results));
     % Store GLRT statistic
     acqResults.peakMetric(PRN) = peakSize/sigPower;
-    
+
     % To prevent index from exceeding matrix dimensions in the fine
     % qacquisition, move to previous code start position.
     if (codePhase+samplesPerCode-1) > length(longSignal)
         codePhase = codePhase - samplesPerCode;
     end
-    
+
     % If the result is above threshold, then there is a signal ...
     if acqResults.peakMetric(PRN) > settings.acqThreshold
         %% Fine resolution frequency search =========================
@@ -243,45 +243,45 @@ for PRN = settings.acqSatelliteList
         signal0DC = longSignal(codePhase:(codePhase + samplesPerCode-1));
         % Remove B1C code modulation from the original signal
         xCarrier = signal0DC .* DataPriTable;
-        
+
         % Pilot signal acquisition
         if (settings.pilotACQflag == 1)
             xCarrierPilot = signal0DC .* PilotPriTable;
         end
-        
+
         %--- Search different frequency bins ------------------------------
         for FineBinIndex = 1 : NumOfFineBins
             % Carrier frequencies of the fine frequency bins
-            FineFrqBins(FineBinIndex) = selFreq - settings.acqStep + fineStep * (FineBinIndex - 1);
+            FineFrqBins(FineBinIndex) = selFreq + settings.acqStep - fineStep * (FineBinIndex - 1);
             % Generate local sine and cosine
-            sigCarr10cm = exp(1i*FineFrqBins(FineBinIndex) * finePhasePoints);
+            sigCarr10cm = exp(-1i*FineFrqBins(FineBinIndex) * finePhasePoints);
             FineResult(FineBinIndex) = abs(sum(xCarrier .* sigCarr10cm));
-            
+
             %--- Pilot signal acquisition
             if (settings.pilotACQflag == 1)
                 FineResult(FineBinIndex) = (FineResult(FineBinIndex)*11 + ...
                     abs(sum(xCarrierPilot .* sigCarr10cm))*29)/40;
             end
         end
-        
+
         % Find the fine carrier freq. -------------------------------------
         % Corresponding to the largest noncoherent power
         [~,maxFinBin] = max(FineResult);
         acqResults.carrFreq(PRN) = FineFrqBins(maxFinBin);
-        
+
         %signal found, if IF =0 just change to 1 Hz to allow processing
         if(acqResults.carrFreq(PRN) == 0)
             acqResults.carrFreq(PRN) = 1;
         end
         acqResults.codePhase(PRN) = codePhase;
-        
+
         %% Downsampling recovery  ===================================
         % Find acquisition results corresponding to orignal sampling freq
         if (exist('oldFreq', 'var') && settings.resamplingflag == 1)
             % Find code phase
             acqResults.codePhase(PRN) = floor((codePhase - 1)/ ...
                 settings.samplingFreq * oldFreq)+1;
-            
+
             % Doppler frequency
             if (settings.IF >= settings.samplingFreq/2)
                 % In this condition, the FFT computed freq. is symmetric
@@ -295,12 +295,12 @@ for PRN = settings.acqSatelliteList
             % Carrier freq. corresponding to orignal sampling freq
             acqResults.carrFreq(PRN) = doppler + oldIF;
         end
-        
+
     else
         %--- No signal with this PRN --------------------------------------
         fprintf('. ');
     end   % if (peakSize/secondPeakSize) > settings.acqThreshold
-    
+
 end    % for PRN = satelliteList
 
 %=== Acquisition is over ==================================================

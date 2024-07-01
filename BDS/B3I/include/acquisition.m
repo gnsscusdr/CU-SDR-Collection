@@ -49,7 +49,7 @@ function acqResults = acquisition(longSignal, settings)
 % to speed up the acquisition, whcih is selectable.
 if (settings.samplingFreq > settings.resamplingThreshold && ...
         settings.resamplingFlag == 1)
-    
+
     %--- Filiter out signal power outside the main lobe of CM code --------
     fs = settings.samplingFreq;
     IF = settings.IF;
@@ -64,11 +64,11 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     b  = fir1(700,wp);
     % Filter operation
     longSignal = filtfilt(b,1,longSignal);
-    
+
     % --- Find resample frequency -----------------------------------------
     % Refer to bandpass sampling theorem(Yi-Ran Sun,Generalized Bandpass
     % Sampling Receivers for Software Defined Radio)
-    
+
     % Upper boundary frequency of the bandpass IF signal
     fu = settings.IF + BW/2;
     % Lower freq. of the acceptable sampling Freq. range
@@ -93,7 +93,7 @@ if (settings.samplingFreq > settings.resamplingThreshold && ...
     % This can not change the settings.samplingFreq outside this
     % acquisition function.
     settings.samplingFreq = ceil((lowerFreq + upperFreq)/2);
-    
+
     %--- Downsample input IF signal ---------------------------------------
     % Signal length after resampling
     signalLen = floor((length(longSignal)-1) /oldFreq * settings.samplingFreq);
@@ -161,17 +161,17 @@ for PRN = settings.acqSatelliteList
     B3ICodes2ms = [B3ICodesTable zeros(1,samplesPerCode)];
     % Search results of all frequency bins and code shifts (for one satellite)
     results = zeros(numberOfFreqBins, samplesPerCode*2);
-    
+
     %--- Perform DFT of B3I code ------------------------------------------
     B3ICodeFreqDom = conj(fft(B3ICodes2ms));
-    
+
     %--- Make the correlation for all frequency bins
     for freqBinIndex = 1:numberOfFreqBins
         % Generate carrier wave frequency grid
-        coarseFreqBin(freqBinIndex) = settings.IF - settings.acqSearchBand + ...
+        coarseFreqBin(freqBinIndex) = settings.IF + settings.acqSearchBand - ...
             settings.acqSearchStep * (freqBinIndex - 1);
         % Generate local sine and cosine
-        sigCarr = exp(1i * coarseFreqBin(freqBinIndex) * phasePoints);
+        sigCarr = exp(-1i * coarseFreqBin(freqBinIndex) * phasePoints);
         %--- Do correlation -----------------------------------------------
         for nonCohIndex = 1: settings.acqNonCohTime
             % Take 2ms vectors of input data to do correlation
@@ -180,6 +180,7 @@ for PRN = settings.acqSatelliteList
             % "Remove carrier" from the signal
             I      = real(sigCarr .* signal);
             Q      = imag(sigCarr .* signal);
+
             % Convert the baseband signal to frequency domain
             IQfreqDom = fft(I + 1i*Q);
             % Multiplication in the frequency domain (correlation in
@@ -191,7 +192,7 @@ for PRN = settings.acqSatelliteList
             results(freqBinIndex, :) = results(freqBinIndex, :) + cohRresult;
         end % nonCohIndex = 1: settings.acqNonCohTime
     end % frqBinIndex = 1:numberOfFreqBins
-    
+
     %% Look for correlation peaks for coarse acquisition ============
     % Find the correlation peak and the carrier frequency
     [~, acqCoarseBin] = max(max(results, [], 2));
@@ -199,17 +200,17 @@ for PRN = settings.acqSatelliteList
     [peakSize, codePhase] = max(max(results));
     % Store GLRT statistic
     acqResults.peakMetric(PRN) = peakSize/sigPower/settings.acqNonCohTime;
-    
+
     % If the result is above threshold, then there is a signal ...
     %% Fine carrier frequency search ================================
-    
-    
+
+
     %--- Do fine acquisition -----------------------------------
     if acqResults.peakMetric(PRN) > settings.acqThreshold
-        
+
         % Indicate PRN number of the detected signal
         fprintf('%02d ', PRN);
-        
+
         %--- Prepare 20ms code, carrier and input signals -----------------
         % B3I code with 10230 chips
         B3ICode = generateB3Icode(PRN);
@@ -218,27 +219,27 @@ for PRN = settings.acqSatelliteList
             (1/settings.codeFreqBasis));
         % B3I code samples
         B3ICode20ms = B3ICode(rem(codeValueIndex, settings.codeLength) + 1);
-        
+
         % Take 20cm incoming signal for fine acquisition
         sig20cm = longSignal(codePhase:codePhase + 20*samplesPerCode -1);
-        
+
         %--- Search different fine freq bins ------------------------------
         for fineBinIndex = 1 : numOfFineBins
             %--- Correlation for each code --------------------------------
             % Carrier frequencies of the frequency bins
-            fineFreqBins(fineBinIndex) = coarseFreqBin(acqCoarseBin) - ...
-                settings.acqSearchStep/2 + fineSearchStep * (fineBinIndex - 1);
+            fineFreqBins(fineBinIndex) = coarseFreqBin(acqCoarseBin) + ...
+                settings.acqSearchStep/2 - fineSearchStep * (fineBinIndex - 1);
             % Local carrier signal
-            sigCarr20cm = exp(1i * fineFreqBins(fineBinIndex) * finePhasePoints);
+            sigCarr20cm = exp(-1i * fineFreqBins(fineBinIndex) * finePhasePoints);
             % Wipe off code and carrier from incoming signals
             basebandSig = sig20cm .* B3ICode20ms .* sigCarr20cm;
-            
+
             % Coherent integration for each code
             for index = 1:20
                 sumPerCode(index) = sum(basebandSig( samplesPerCode * ...
                     (index - 1) + 1 : samplesPerCode * index ));
             end
-            
+
             %--- Search bit/NH code edge for GEO or MEO/IGSO SV -----------
             if ((1 <= PRN) && (PRN <=5 )) || ((59 <= PRN) && (PRN <= 63))
                 % -- 2 cases of bit edge for GEO --
@@ -247,7 +248,7 @@ for PRN = settings.acqSatelliteList
                 % 2nd case: not aligns with the acquired code phase
                 comPower2 = sum(abs(sumPerCode([1,20]))) + ...
                     sum(abs(sum(reshape(sumPerCode(2:19)',[2,9]))));
-                
+
                 % Maximal integration power
                 maxPower = max(comPower1,comPower2);
             elseif (6 <= PRN) && (PRN <= 58)
@@ -255,7 +256,7 @@ for PRN = settings.acqSatelliteList
                 % Initialize maximal power for case when the acquired code
                 % phase just aligned with the NH code edge
                 maxPower = abs(sum(sumPerCode .* NHcode));
-                
+
                 % Search the other 19 cases
                 for comIndex = 1:19
                     % Shift NH code for next combiniation
@@ -269,10 +270,10 @@ for PRN = settings.acqSatelliteList
                     maxPower = max(maxPower,comPower);
                 end % Search different NH code combiniations
             end
-            
+
             fineResult(fineBinIndex) = maxPower;
         end % for numOfFineBins
-        
+
         %--- Find the fine carrier freq. ----------------------------------
         [~, maxFinBin] = max(fineResult);
         acqResults.carrFreq(PRN) = fineFreqBins(maxFinBin);
@@ -282,17 +283,17 @@ for PRN = settings.acqSatelliteList
         if(acqResults.carrFreq(PRN) == 0)
             acqResults.carrFreq(PRN) = 1;
         end
-        
+
         %% Downsampling recovery ====================================
         % Find acquisition results corresponding to orignal sampling freq
         if (exist('oldFreq', 'var') && settings.resamplingFlag == 1)
             % Find code phase
             acqResults.codePhase(PRN) = floor((codePhase - 1)/ ...
                 settings.samplingFreq * oldFreq)+1;
-            
+
             % Doppler frequency
             doppler = acqResults.carrFreq(PRN) - settings.IF;
-            
+
             % Carrier freq. corresponding to orignal sampling freq
             acqResults.carrFreq(PRN) = doppler + oldIF;
         end
@@ -300,7 +301,7 @@ for PRN = settings.acqSatelliteList
         %--- No signal with this PRN --------------------------------------
         fprintf('. ');
     end   % if (peakSize/secondPeakSize) > settings.acqThreshold
-    
+
 end    % for PRN = satelliteList
 
 %=== Acquisition is over ==================================================

@@ -102,7 +102,7 @@ for G1orG2 = 1:2
     index = find(...
         round(abs(tlmXcorrResult(xcorrLength : xcorrLength * 2 - 1))) == 8.00)';
     % Analyze detected preamble like patterns ================================
-    for i = 1:size(index) % For each occurrence
+    for i = 1:height(index) % For each occurrence
         
         % Ensure the search for i has the number of a whole message(300) 
         if ((length(decodedBits) - index(i) +1) >=300 )

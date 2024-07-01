@@ -41,7 +41,7 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 32000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 36000;        %[ms]
+settings.msToProcess        = 60000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 12;
@@ -58,7 +58,7 @@ settings.skipNumberOfSamples     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '../../../dataSets/GL1_IF0KHz_FS12MHz.bin';
+settings.fileName           = '../../../GL1_IF0KHz_FS12MHz.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';

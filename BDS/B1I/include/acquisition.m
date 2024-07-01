@@ -65,7 +65,7 @@ acqResults.codePhase    = zeros(1, 58);
 % Correlation peak ratios of the detected signals
 acqResults.peakMetric   = zeros(1, 58);
 % Initialize the starting frequency
-initFreq = settings.IF - (settings.acqSearchBand/2) * 1000;
+initFreq = settings.IF + (settings.acqSearchBand/2) * 1000;
 % Initialize matrix that accumulates correlation results
 accMat = zeros((numberOfFrqBins - 1)*Nshifts +1,samplesPerBlock);
 
@@ -90,7 +90,7 @@ for PRN = settings.acqSatelliteList
         %--- Generate carrier wave frequency grid (1kHz step per 1msec) -----------
         initFreqShift = initFreq + (binIter-1)*(freqResolution/Nshifts);      
         %--- Generate local sine and cosine -------------------------------
-        sigCarr = exp(1i*initFreqShift*phasePoints);
+        sigCarr = exp(-1i*initFreqShift*phasePoints);
 
             %--- "Remove carrier" from the signal -----------------------------
         I1      = real(sigCarr .* signal1);
@@ -173,7 +173,7 @@ for PRN = settings.acqSatelliteList
         % Assign the obtained code phase to results
         acqResults.codePhase(PRN) = codePhase;
         % Assign the obtained Carrier Frequency to results
-        acqResults.carrFreq(PRN) = initFreq + freqResolution*(frequencyBinIndex - 1) + (freqResolution/Nshifts)*(freqShift-1);
+        acqResults.carrFreq(PRN) = initFreq - freqResolution*(frequencyBinIndex - 1) + (freqResolution/Nshifts)*(freqShift-1);
                 
         %% Downsampling recovery ============================================
         % Find acquisition results corresponding to orignal sampling freq

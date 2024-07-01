@@ -78,6 +78,7 @@ trackResults.pllDiscrFilt   = inf(1, settings.msToProcess);
 % Remain code and carrier phase for position calculation
 trackResults.remCodePhase   = inf(1, settings.msToProcess);
 trackResults.remCarrPhase   = inf(1, settings.msToProcess);
+
 %C/No
 trackResults.CNo.VSMValue = ...
     zeros(1,floor(settings.msToProcess/settings.CNo.VSMinterval));
@@ -91,6 +92,7 @@ trackResults = repmat(trackResults, 1, settings.numberOfChannels);
 %--- DLL variables --------------------------------------------------------
 % Define early-late offset (in chips)
 earlyLateSpc = settings.dllCorrelatorSpacing;
+
 % Summation interval
 PDIcode = settings.intTime;
 
@@ -128,7 +130,7 @@ for channelNr = 1:settings.numberOfChannels
     if (channel(channelNr).PRN ~= 0)
         % Save additional information - each channel's tracked PRN
         trackResults(channelNr).PRN     = channel(channelNr).PRN;
-        
+
         % Move the starting point of processing. Can be used to start the
         % signal processing at any point in the data record (e.g. for long
         % records). In addition skip through that data file to start at the
@@ -141,18 +143,18 @@ for channelNr = 1:settings.numberOfChannels
             fseek(fid, dataAdaptCoeff*(settings.skipNumberOfBytes + ...
                 channel(channelNr).codePhase-1), 'bof');
         end
-        
+
         % Get a vector with the E5aI tiered code sampled 1x/chip
         E5aICode = generateE5aIcode(channel(channelNr).PRN,2);
         % Then make it possible to do early and late versions
         E5aICode = [E5aICode(settings.codeLength) E5aICode E5aICode(1)]; %#ok<AGROW>
-        
+
         if (settings.pilotTRKflag == 1)
-                    % Get a vector with the E5aQ primary code sampled 1x/chip
-        E5aQcode = generateE5aQcode(channel(channelNr).PRN,1);
-        E5aQcode = [E5aQcode(end) E5aQcode E5aQcode(1)];
+            % Get a vector with the E5aQ primary code sampled 1x/chip
+            E5aQcode = generateE5aQcode(channel(channelNr).PRN,1);
+            E5aQcode = [E5aQcode(end) E5aQcode E5aQcode(1)];
         end
-        
+
         %--- Perform various initializations ------------------------------
         % DSefine initial code frequency basis of NCO
         codeFreq      = channel(channelNr).codeFreq;
@@ -163,28 +165,28 @@ for channelNr = 1:settings.numberOfChannels
         carrFreqBasis = channel(channelNr).acquiredFreq;
         % Define residual carrier phase
         remCarrPhase  = 0.0;
-        
+
         %code tracking loop parameters
         oldCodeNco   = 0.0;
         oldCodeError = 0.0;
-        
+
         % Carrier/Costas loop parameters
         d2CarrError  = 0.0;
         dCarrError   = 0.0;
-        
+
         %C/No computation
         vsmCnt  = 0;
         CNo = 0;
-        
+
         %=== Process the number of specified code periods =================
-        for loopCnt =  1:settings.msToProcess        
-            
+        for loopCnt =  1:settings.msToProcess
+
             %% GUI update -------------------------------------------------------------
             % The GUI is updated every 400ms. This way Matlab GUI is still
             % responsive enough. At the same time Matlab is not occupied
             % all the time with GUI task.
             if (rem(loopCnt, 400) == 0)
-                
+
                 Ln=newline;
                 trackingStatus=['Tracking: Ch ', int2str(channelNr), ...
                     ' of ', int2str(TrackedNr),Ln ...
@@ -192,7 +194,7 @@ for channelNr = 1:settings.numberOfChannels
                     'Completed ',int2str(loopCnt), ...
                     ' of ', int2str(settings.msToProcess), ' msec',Ln...
                     'C/No: ',CNo,' (dB-Hz)'];
-                
+
                 try
                     waitbar(loopCnt/settings.msToProcess, hwb, ...
                         trackingStatus);
@@ -203,7 +205,7 @@ for channelNr = 1:settings.numberOfChannels
                     return
                 end
             end
-            
+
             %% Read next block of data ------------------------------------------------
             % Record sample number (based on 8bit samples)
             if strcmp(settings.dataType,'int16')
@@ -216,20 +218,20 @@ for channelNr = 1:settings.numberOfChannels
             codePhaseStep = codeFreq / settings.samplingFreq;
             % Find the size of a "block" or code period in whole samples
             blksize = ceil((settings.codeLength-remCodePhase) / codePhaseStep);
-            
+
             % Read in the appropriate number of samples to process this
             % interation
             [rawSignal, samplesRead] = fread(fid, ...
                 dataAdaptCoeff*blksize, settings.dataType);
             rawSignal = rawSignal';
-            
+
             % For complex data
             if (dataAdaptCoeff==2)
                 rawSignal1=rawSignal(1:2:end);
                 rawSignal2=rawSignal(2:2:end);
                 rawSignal = rawSignal1 + 1i .* rawSignal2;  %transpose vector
             end
-            
+
             % If did not read in enough samples, then could be out of
             % data - better exit
             if (samplesRead ~= dataAdaptCoeff*blksize)
@@ -237,10 +239,11 @@ for channelNr = 1:settings.numberOfChannels
                 fclose(fid);
                 return
             end
-            
+
             %% Set up all the code phase tracking information -------------------------
             % Save remCodePhase for current correlation
             trackResults(channelNr).remCodePhase(loopCnt) = remCodePhase;
+
             % Define index into early code vector
             tcode       = (remCodePhase-earlyLateSpc) : ...
                 codePhaseStep : ...
@@ -251,7 +254,7 @@ for channelNr = 1:settings.numberOfChannels
             if (settings.pilotTRKflag == 1)
                 earlyCodeE1c   = E5aQcode(tcode2);
             end
-            
+
             % Define index into late code vector
             tcode       = (remCodePhase+earlyLateSpc) : ...
                 codePhaseStep : ...
@@ -262,7 +265,7 @@ for channelNr = 1:settings.numberOfChannels
             if (settings.pilotTRKflag == 1)
                 lateCodeE1c   = E5aQcode(tcode2);
             end
-            
+
             % Define index into prompt code vector
             tcode       = remCodePhase : ...
                 codePhaseStep : ...
@@ -273,27 +276,27 @@ for channelNr = 1:settings.numberOfChannels
             if (settings.pilotTRKflag == 1)
                 promptCodeE1c   = E5aQcode(tcode2);
             end
-            
+
             remCodePhase = (tcode(blksize) + codePhaseStep) - settings.codeLength;
-            
+
             %% Generate the carrier frequency to mix the signal to baseband -----------
             % Save remCarrPhase for current correlation
             trackResults(channelNr).remCarrPhase(loopCnt) = remCarrPhase;
-            
+
             % Get the argument to sin/cos functions
             time    = (0:blksize) ./ settings.samplingFreq;
             trigarg = ((carrFreq * 2.0 * pi) .* time) + remCarrPhase;
             remCarrPhase = rem(trigarg(blksize+1), (2 * pi));
-            
+
             % Finally compute the signal to mix the collected data to
             % bandband
-            carrsig = exp(1i .* trigarg(1:blksize));
-            
+            carrsig = exp(-1i .* trigarg(1:blksize));
+
             %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
-            qBasebandSignal = real(carrsig .* rawSignal);
-            iBasebandSignal = imag(carrsig .* rawSignal);
-            
+            iBasebandSignal = real(carrsig .* rawSignal);
+            qBasebandSignal = imag(carrsig .* rawSignal);
+
             % Now get early, late, and prompt values for each
             I_E = sum(earlyCode  .* iBasebandSignal);
             Q_E = sum(earlyCode  .* qBasebandSignal);
@@ -310,7 +313,7 @@ for channelNr = 1:settings.numberOfChannels
                 I_L_E1c = sum(lateCodeE1c   .* iBasebandSignal);
                 Q_L_E1c = sum(lateCodeE1c   .* qBasebandSignal);
             end
-            
+
             %% Find carrier error and update carrier NCO ----------------------------------
             % Implement PLL carrier loop discriminator
             carrError = atan(Q_P / I_P) / (2.0 * pi);
@@ -322,22 +325,22 @@ for channelNr = 1:settings.numberOfChannels
                 QI = (I_P_E1c + 1i*Q_P_E1c) * exp(-1i*pi/2);
                 % carrier phase tracking error for pilot signal (E5aQ)
                 carrErrorE1c = atan(imag(QI)/real(QI))/ (2.0 * pi);
-                
+
                 % As the E5aI and E5aQ power is the same, so a simple avergae
                 % is calculated for the carrier phase error estimate
                 carrError = (carrError + carrErrorE1c)/2;
             end
-            
+
             % Implement carrier loop filter and generate NCO command
             d2CarrError = d2CarrError + carrError * pf3;
             dCarrError  = d2CarrError + carrError * pf2 + dCarrError;
             carrNco     = dCarrError + carrError * pf1;
-            
+
             % Save carrier frequency for current correlation
             trackResults(channelNr).carrFreq(loopCnt) = carrFreq;
             % Modify carrier freq based on NCO command
             carrFreq = carrFreqBasis + carrNco;
-            
+
             %% Find DLL error and update code NCO -------------------------------------
             codeError = (sqrt(I_E^2 + Q_E^2) - sqrt(I_L^2 + Q_L^2)) / ...
                 (sqrt(I_E^2 + Q_E^2) + sqrt(I_L^2 + Q_L^2));
@@ -345,38 +348,41 @@ for channelNr = 1:settings.numberOfChannels
             if (settings.pilotTRKflag == 1)
                 codeErrorE1c = (sqrt(I_E_E1c^2 + Q_E_E1c^2) - sqrt(I_L_E1c^2 + Q_L_E1c^2)) / ...
                     (sqrt(I_E_E1c^2 + Q_E_E1c^2) + sqrt(I_L_E1c^2 + Q_L_E1c^2));
-                
+
                 % Combined code tracking error estimate
                 codeError = (codeError + codeErrorE1c)/2;
             end
-            
+
             % Implement code loop filter and generate NCO command
             codeNco = oldCodeNco + (tau2code/tau1code) * ...
                 (codeError - oldCodeError) + codeError * (PDIcode/tau1code);
             oldCodeNco   = codeNco;
             oldCodeError = codeError;
-            
+
             % Save code frequency for current correlation
             trackResults(channelNr).codeFreq(loopCnt) = codeFreq;
             % Modify code freq based on NCO command
             codeFreq = channel(channelNr).codeFreq - codeNco;
-            
+
             %% Record various measures to show in postprocessing ----------------------
             trackResults(channelNr).dllDiscr(loopCnt)       = codeError;
             trackResults(channelNr).dllDiscrFilt(loopCnt)   = codeNco;
             trackResults(channelNr).pllDiscr(loopCnt)       = carrError;
             trackResults(channelNr).pllDiscrFilt(loopCnt)   = carrNco;
-            
+
             trackResults(channelNr).I_E(loopCnt) = I_E;
             trackResults(channelNr).I_P(loopCnt) = I_P;
             trackResults(channelNr).I_L(loopCnt) = I_L;
             trackResults(channelNr).Q_E(loopCnt) = Q_E;
             trackResults(channelNr).Q_P(loopCnt) = Q_P;
             trackResults(channelNr).Q_L(loopCnt) = Q_L;
+
             % Pilot channel correlation values
-            trackResults(channelNr).Pilot_I_P(loopCnt) = I_P_E1c ;
-            trackResults(channelNr).Pilot_Q_P(loopCnt) = Q_P_E1c;
-            
+            if (settings.pilotTRKflag == 1)
+                trackResults(channelNr).Pilot_I_P(loopCnt) = I_P_E1c ;
+                trackResults(channelNr).Pilot_Q_P(loopCnt) = Q_P_E1c;
+            end
+
             if (rem(loopCnt,settings.CNo.VSMinterval)==0)
                 vsmCnt = vsmCnt+1;
                 CNoValue = CNoVSM(trackResults(channelNr).I_P(loopCnt-settings.CNo.VSMinterval+1:loopCnt),...
@@ -385,14 +391,14 @@ for channelNr = 1:settings.numberOfChannels
                 trackResults(channelNr).CNo.VSMIndex(vsmCnt) = loopCnt;
                 CNo = int2str(CNoValue);
             end
-            
+
         end % for loopCnt
-        
+
         % If we got so far, this means that the tracking was successful
         % Now we only copy status, but it can be update by a lock detector
         % if implemented
         trackResults(channelNr).status  = channel(channelNr).status;
-        
+
     end % if a PRN is assigned
 end % for channelNr
 

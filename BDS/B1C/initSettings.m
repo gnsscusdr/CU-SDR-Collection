@@ -43,15 +43,16 @@ function settings = initSettings()
 % $Id: initSettings.m,v 1.9.2.31 2006/08/18 11:41:57 dpl Exp $
 
 %% Raw signal file name and related parameter =======================
-settings.fileName           = '../../../dataSets/L1_IF20Khz_FS18MHz.bin';
+settings.fileName           = '../../../L1_IF20KHz_FS18MHz.bin';
 % Data type used to store one sample
+
 settings.dataType           = 'schar';
 % File Types
 %1 - 8 bit real samples S0,S1,S2,...
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
 settings.fileType           = 2;
 %Intermediate, sampling, code freqency and code length 
-settings.IF                 = -20e3;        %[Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;         %[Hz]
 settings.samplingFreq       = 18e6;         %[Hz]
 % Front-end bandwidth for calculation of weighting factor in wideband (WB)
 % tracking mode (this is required only for WB tracking mode)
@@ -60,7 +61,7 @@ settings.FEBW   = 27e6;          % [Hz]
 %% Important operation modes configuration ==========================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 40000;        %[ms]
+settings.msToProcess        = 60000;        %[ms]
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition. In May 2020, BeiDou3 includes PRNs with 19:30,32:46,59,60.
 settings.acqSatelliteList   = [1:62]; 

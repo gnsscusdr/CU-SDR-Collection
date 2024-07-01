@@ -119,7 +119,7 @@ index = find(...
     searchStartOffset;
 
 % Analyze detected preamble like patterns =============================
-for i = 1:size(index) % For each occurrence
+for i = 1:height(index) % For each occurrence
     
     %--- Find distances in time between this occurrence and the rest of
     %preambles like patterns. If the distance is 6000 milliseconds (one
@@ -171,7 +171,7 @@ end % for i = 1:size(index)
 
 % Exclude channel from the active channel list if no valid preamble was
 % detected
-if subFrameStart == inf
+if subFrameStart == inf || (subFrameStart + 30000) > (length(I_P_InputBits))
     disp(['    Could not find valid preambles for PRN # ',num2str(PRN),'!']);
     return
 end

@@ -97,6 +97,8 @@ if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
     %--- Do the acquisition -------------------------------------------
     disp ('   Acquiring satellites...');
         acqResults = acquisition(data, settings);
+
+        save("acqResults.mat")
 end
 
 %% Initialize channels and prepare for the run ========================
@@ -120,6 +122,7 @@ disp (['   Tracking started at ', datestr(startTime)]);
 
 % Process all channels for given data block
     [trkResults, ~] = tracking(fid, channel, settings);
+    save("trkResults.mat");
 % Close the data file
 fclose(fid);
 
@@ -127,7 +130,8 @@ fclose(fid);
 
 %% Calculate navigation solutions =====================================
 disp('   Calculating navigation solutions...');
-[navResults, ~] = postNavigation(trkResults, settings);
+[navResults, eph] = postNavigation(trkResults, settings);
+save("navResults.mat");
 disp('   Processing is complete for this data block');
 
 

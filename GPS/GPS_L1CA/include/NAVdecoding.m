@@ -100,7 +100,7 @@ index = find(...
 index = index((index>40 & index<settings.msToProcess - (20 * 60 -1)) == 1);
 
 % Analyze detected preamble like patterns ================================
-for i = 1:size(index) % For each occurrence
+for i = 1:height(index) % For each occurrence
     
     %--- Find distances in time between this occurrence and the rest of
     %preambles like patterns. If the distance is 6000 milliseconds (one

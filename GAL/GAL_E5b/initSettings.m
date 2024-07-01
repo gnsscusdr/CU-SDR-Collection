@@ -41,7 +41,7 @@ function settings = initSettings()
 % Number of milliseconds to be processed used 32000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
 % settings.msToProcess        = 65000;        %[ms]
-settings.msToProcess        = 38000;        %[ms]
+settings.msToProcess        = 60000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 12;
@@ -56,7 +56,7 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 
-settings.fileName           = '../../../dataSets/L5b_IF20KHz_FS18MHz.bin';
+settings.fileName           = '../../../L5b_IF20KHz_FS18MHz.bin';
 
 % Data type used to store one sample
 settings.dataType           = 'schar';
@@ -67,7 +67,7 @@ settings.dataType           = 'schar';
 settings.fileType           = 2;
 
 % Intermediate, sampling and code frequencies
-settings.IF                 = -20e3;            % [Hz] (Invert sign here for proper acquisition)
+settings.IF                 = 20e3;             % [Hz]
 settings.samplingFreq       = 18e6;             % [Hz]
 settings.codeFreqBasis      = 10.23e6;          % [Hz]
 

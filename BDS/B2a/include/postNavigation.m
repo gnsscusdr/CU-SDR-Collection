@@ -78,13 +78,13 @@ for channelNr = activeChnList
     %=== Decode ephemerides and TOW of the first sub-frame ================
     [eph(PRN), subFrameStart(channelNr), TOW(channelNr)] = ...
                                   BCNAV2decoding(trackResults(channelNr).I_P);  %#ok<AGROW>
-    %--- Exclude satellite if it does not have the necessary cnav data ----
+    % %--- Exclude satellite if it does not have the necessary cnav data ----
     if (eph(PRN).idValid(1) ~= 10 || eph(PRN).idValid(2) ~= 11 ...
-        || sum(eph(PRN).idValid(3:7) == (30:34))<5 || eph(PRN).HS ~= 0)
+        || (~sum(eph(PRN).idValid(3:7) == (30:34))) || eph(PRN).HS ~= 0)
 
         %--- Exclude channel from the list --------------------------------
         activeChnList = setdiff(activeChnList, channelNr);
-        
+
         %--- Print CNAV decoding information for current PRN --------------
         if (eph(PRN).idValid(1) ~= 10)
             fprintf('  Message type 10 for PRN %02d not decoded.\n', PRN);

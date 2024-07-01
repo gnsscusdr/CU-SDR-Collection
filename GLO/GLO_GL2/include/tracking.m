@@ -109,6 +109,14 @@ PDIcode = settings.intTime;
 % Calculate filter coefficient values
 [pf3,pf2,pf1] = calcLoopCoefCarr(settings);
 
+% -------- Number of acqusired signals ------------------------------------
+TrackedNr =0 ;
+for channelNr = 1:settings.numberOfChannels
+    if channel(channelNr).status == 'T'
+        TrackedNr = TrackedNr+1;
+    end
+end
+
 % Start waitbar
 hwb = waitbar(0,'Tracking...','Visible','off');
 
@@ -177,7 +185,7 @@ for channelNr = 1:settings.numberOfChannels
 
             Ln=newline;
             trackingStatus=['Tracking: Ch ', int2str(channelNr), ...
-                ' of ', int2str(settings.numberOfChannels),Ln ...
+                ' of ', int2str(TrackedNr),Ln ...
                 'K: ', int2str(channel(channelNr).K),Ln ...
                 'Completed ',int2str(loopCnt), ...
                 ' of ', int2str(codePeriods), ' msec',Ln...

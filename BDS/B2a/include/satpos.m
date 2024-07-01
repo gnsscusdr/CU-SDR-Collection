@@ -58,8 +58,16 @@ for satNr = 1 : numOfSatellites
     % As joint tracking of pilot and data channel is employed, the
     % eph.ISC_B1Cd is ignored.
     satClkCorr(satNr) = (eph(prn).a_2 * dt + eph(prn).a_1) * dt + ...
-        eph(prn).a_0 - ...
-        eph(prn).T_GDB1Cp;
+        eph(prn).a_0;
+
+    % Adding the Group Delay Differential Correction Factor for the
+    % Satellite Ranging Code Phase Time Offset
+    if eph(prn).idValid(3) == 30
+        t_sv = eph(prn).T_GDB1Cp + eph(prn).T_GDB2ap + eph(prn).ISC_B2ad ;
+
+        satClkCorr(satNr) = (eph(prn).a_2 * dt + eph(prn).a_1) * dt + ...
+        eph(prn).a_0 - t_sv;
+    end
     
     time = transmitTime(satNr) - satClkCorr(satNr);
     
@@ -149,5 +157,10 @@ for satNr = 1 : numOfSatellites
     
     %% Include relativistic correction and iono in clock correction -----------
     satClkCorr(satNr) = (eph(prn).a_2 * dt + eph(prn).a_1) * dt + ...
-                               eph(prn).a_0 - eph(prn).T_GDB1Cp + dtr;   
+                               eph(prn).a_0 + dtr;   
+
+    if eph(prn).idValid(3) == 30
+        satClkCorr(satNr) = (eph(prn).a_2 * dt + eph(prn).a_1) * dt + ...
+                               eph(prn).a_0 - t_sv + dtr;   
+    end
 end % for satNr = 1 : numOfSatellites

@@ -75,3 +75,9 @@ eph.WN_og     = [];
 
 % ephemeris decoded flag --------------------------------------------------
 eph.flag         = 0;
+
+% Issue of Data (IOD) Values ----------------------------------------------
+eph.IODnav1   = [];
+eph.IODnav2   = [];
+eph.IODnav3   = [];
+eph.IODnav4   = [];

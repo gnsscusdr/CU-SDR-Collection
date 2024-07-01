@@ -17,9 +17,9 @@ function [trackResults, channel]= tracking(fid, channel, settings)
 %                       saved every millisecond.
 
 %--------------------------------------------------------------------------
-%                         CU Multi-GNSS SDR  
+%                         CU Multi-GNSS SDR
 % (C) Updated by Daehee Won, Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
-% Based on the original work by Darius Plausinaitis,Peter Rinder, 
+% Based on the original work by Darius Plausinaitis,Peter Rinder,
 % Nicolaj Bertelsen and Dennis M. Akos
 %--------------------------------------------------------------------------
 %This program is free software; you can redistribute it and/or
@@ -84,7 +84,6 @@ trackResults.CNo.VSMIndex = ...
 trackResults = repmat(trackResults, 1, settings.numberOfChannels);
 
 %% Initialize tracking variables ==========================================
-
 codePeriods = settings.msToProcess;     % For GPS one C/A code is one ms
 
 %--- DLL variables --------------------------------------------------------
@@ -96,13 +95,20 @@ PDIcode = settings.intTime;
 
 % Calculate filter coefficient values
 [tau1code, tau2code] = calcLoopCoef(settings.dllNoiseBandwidth, ...
-                                    settings.dllDampingRatio, ...
-                                    1.0);
+    settings.dllDampingRatio, ...
+    1.0);
 
 %--- PLL variables --------------------------------------------------------
 % Calculate filter coefficient values
 [pf3,pf2,pf1] = calcLoopCoefCarr(settings);
 
+% -------- Number of acqusired signals ------------------------------------
+TrackedNr =0 ;
+for channelNr = 1:settings.numberOfChannels
+    if channel(channelNr).status == 'T'
+        TrackedNr = TrackedNr+1;
+    end
+end
 % Start waitbar
 hwb = waitbar(0,'Tracking...');
 
@@ -137,7 +143,7 @@ for channelNr = 1:settings.numberOfChannels
         % Get a vector with the C/A code sampled 1x/chip
         caCode = generateCAcode53(channel(channelNr).PRN);
         % Then make it possible to do early and late versions
-        caCode = [caCode(2046) caCode caCode(1)];
+        caCode = [caCode(settings.codeLength) caCode caCode(1)];
 
         %--- Perform various initializations ------------------------------
 
@@ -161,7 +167,7 @@ for channelNr = 1:settings.numberOfChannels
 
         %C/No computation
         vsmCnt  = 0;CNo = 0;
-        
+
         %=== Process the number of specified code periods =================
         for loopCnt =  1:codePeriods
 
@@ -173,7 +179,7 @@ for channelNr = 1:settings.numberOfChannels
 
                 Ln=sprintf('\n');
                 trackingStatus=['Tracking: Ch ', int2str(channelNr), ...
-                    ' of ', int2str(settings.numberOfChannels),Ln ...
+                    ' of ', int2str(TrackedNr),Ln ...
                     'PRN: ', int2str(channel(channelNr).PRN),Ln ...
                     'Completed ',int2str(loopCnt), ...
                     ' of ', int2str(codePeriods), ' msec',Ln...
@@ -181,8 +187,8 @@ for channelNr = 1:settings.numberOfChannels
 
                 try
                     waitbar(loopCnt/codePeriods, ...
-                            hwb, ...
-                            trackingStatus);
+                        hwb, ...
+                        trackingStatus);
                 catch
                     % The progress bar was closed. It is used as a signal
                     % to stop, "cancel" processing. Exit.
@@ -228,22 +234,22 @@ for channelNr = 1:settings.numberOfChannels
             trackResults(channelNr).remCodePhase(loopCnt) = remCodePhase;
             % Define index into early code vector
             tcode       = (remCodePhase-earlyLateSpc) : ...
-                           codePhaseStep : ...
-                           ((blksize-1)*codePhaseStep+remCodePhase-earlyLateSpc);
+                codePhaseStep : ...
+                ((blksize-1)*codePhaseStep+remCodePhase-earlyLateSpc);
             tcode2      = ceil(tcode) + 1;
             earlyCode   = caCode(tcode2);
 
             % Define index into late code vector
             tcode       = (remCodePhase+earlyLateSpc) : ...
-                           codePhaseStep : ...
-                           ((blksize-1)*codePhaseStep+remCodePhase+earlyLateSpc);
+                codePhaseStep : ...
+                ((blksize-1)*codePhaseStep+remCodePhase+earlyLateSpc);
             tcode2      = ceil(tcode) + 1;
             lateCode    = caCode(tcode2);
 
             % Define index into prompt code vector
             tcode       = remCodePhase : ...
-                          codePhaseStep : ...
-                          ((blksize-1)*codePhaseStep+remCodePhase);
+                codePhaseStep : ...
+                ((blksize-1)*codePhaseStep+remCodePhase);
             tcode2      = ceil(tcode) + 1;
             promptCode  = caCode(tcode2);
 
@@ -260,12 +266,12 @@ for channelNr = 1:settings.numberOfChannels
 
             % Finally compute the signal to mix the collected data to
             % bandband
-            carrsig = exp(1i .* trigarg(1:blksize));
+            carrsig = exp(-1i .* trigarg(1:blksize));
 
             %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
-            qBasebandSignal = real(carrsig .* rawSignal);
-            iBasebandSignal = imag(carrsig .* rawSignal);
+            iBasebandSignal = real(carrsig .* rawSignal);
+            qBasebandSignal = imag(carrsig .* rawSignal);
 
             % Now get early, late, and prompt values for each
             I_E = sum(earlyCode  .* iBasebandSignal);
@@ -291,7 +297,7 @@ for channelNr = 1:settings.numberOfChannels
             % Modify carrier freq based on NCO command
             carrFreq = carrFreqBasis + carrNco;
 
-            
+
 
             %% Find DLL error and update code NCO -------------------------------------
             codeError = (sqrt(I_E * I_E + Q_E * Q_E) - sqrt(I_L * I_L + Q_L * Q_L)) / ...

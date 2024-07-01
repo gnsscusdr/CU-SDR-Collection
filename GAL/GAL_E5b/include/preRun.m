@@ -12,12 +12,12 @@ function [channel] = preRun(acqResults, settings)
 %
 %   Outputs:
 %       channel     - structure contains information for each channel (like
-%                   properties of the tracked signal, channel status etc.). 
+%                   properties of the tracked signal, channel status etc.).
 
 %--------------------------------------------------------------------------
-%                         CU Multi-GNSS SDR  
+%                         CU Multi-GNSS SDR
 % (C) Updated by Yafeng Li, Nagaraj C. Shivaramaiah and Dennis M. Akos
-% Based on the original work by Darius Plausinaitis,Peter Rinder, 
+% Based on the original work by Darius Plausinaitis,Peter Rinder,
 % Nicolaj Bertelsen and Dennis M. Akos
 %--------------------------------------------------------------------------
 %This program is free software; you can redistribute it and/or
@@ -50,8 +50,8 @@ if (settings.pilotTRKflag == 1) % Used for pilot signal tracking
     channel.E1bQCodePhase = 0;
 end
 channel.status          = '-';  % Mode/status of the tracking channel
-                                % "-" - "off" - no signal to track
-                                % "T" - Tracking state
+% "-" - "off" - no signal to track
+% "T" - Tracking state
 
 %--- Copy initial data to all channels ------------------------------------
 channel = repmat(channel, 1, settings.numberOfChannels);
@@ -68,9 +68,9 @@ for ii = 1:min([settings.numberOfChannels, sum(acqResults.carrFreq ~= 0)])
     channel(ii).PRN          = PRNindexes(ii);
     channel(ii).acquiredFreq = acqResults.carrFreq(PRNindexes(ii));
     channel(ii).codePhase    = acqResults.codePhase(PRNindexes(ii));
-    channel(ii).codeFreq     = settings.codeFreqBasis -...
-                    (channel(ii).acquiredFreq - settings.IF)/...
-                    settings.carrFreqBasis * settings.codeFreqBasis;
+    channel(ii).codeFreq     = settings.codeFreqBasis + ...
+        (channel(ii).acquiredFreq - settings.IF)/...
+        settings.carrFreqBasis * settings.codeFreqBasis;
     % Set tracking into mode (there can be more modes if needed e.g. pull-in)
     channel(ii).status       = 'T';
 end

@@ -97,7 +97,7 @@ decodedNav = zeros(1,878);
 crcDet = comm.CRCDetector([24 23 18 17 14 11 10 7 6 5 4 3 1 0]);
 
 %% B1C data decoding and ephemeris extract ==========================
-for i = 1:size(index) % For each occurrence
+for i = 1:height(index) % For each occurrence
     
     % Take the B-CNAV1 symbols with one-frame length from data-channel
     % prompt correlation values and change them to "1" and "0"

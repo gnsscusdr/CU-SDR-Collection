@@ -250,6 +250,7 @@ for channelNr = 1:settings.numberOfChannels
             %% Set up all the code phase tracking information -------------------------
             % Save remCodePhase for current correlation
             trackResults(channelNr).remCodePhase(loopCnt) = remCodePhase;
+
             % Define index into early code vector
             tcode       = (remCodePhase-earlyLateSpc) : ...
                 codePhaseStep : ...
@@ -300,12 +301,12 @@ for channelNr = 1:settings.numberOfChannels
 
             % Finally compute the signal to mix the collected data to
             % bandband
-            carrsig = exp(1i .* trigarg(1:blksize));
+            carrsig = exp(-1i .* trigarg(1:blksize));
 
             %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
-            qBasebandSignal = real(carrsig .* rawSignal);
-            iBasebandSignal = imag(carrsig .* rawSignal);
+            iBasebandSignal = real(carrsig .* rawSignal);
+            qBasebandSignal = imag(carrsig .* rawSignal);
 
             % Now get early, late, and prompt values for each
             I_E = sum(earlyCode  .* iBasebandSignal);

@@ -32,7 +32,7 @@ acqResults.codePhase    = zeros(1, 32);
 % Correlation peak ratios of the detected signals
 acqResults.peakMetric   = zeros(1, 32);
 % Initialize the starting frequency
-initFreq = settings.IF - (settings.acqSearchBand/2) * 1000;
+initFreq = settings.IF + (settings.acqSearchBand/2) * 1000;
 
 fprintf('(');
 
@@ -51,9 +51,9 @@ for PRN = settings.acqSatelliteList
 
     for binIter = 1:Nshifts
         %--- Generate carrier wave frequency grid (1kHz step per 1msec) -----------
-        initFreqShift = initFreq + (binIter-1)*(freqResolution/Nshifts);
+        initFreqShift = initFreq - (binIter-1)*(freqResolution/Nshifts);
         %--- Generate local sine and cosine -------------------------------
-        sigCarr = exp(1i*initFreqShift*phasePoints);
+        sigCarr = exp(-1i*initFreqShift*phasePoints);
         %--- "Remove carrier" from the signal -----------------------------
         I1      = real(sigCarr .* signal);
         Q1      = imag(sigCarr .* signal);
@@ -114,8 +114,9 @@ for PRN = settings.acqSatelliteList
     if (maxPeak/secondPeakSize) > settings.acqThreshold
     %--- Indicate PRN number of the detected signal -------------------
         fprintf('%02d ', PRN);
-        acqResults.carrFreq(PRN) = initFreq + freqResolution*(frequencyBinIndex - 1) + (freqResolution/Nshifts)*(freqShift-1);
+        acqResults.carrFreq(PRN) = initFreq - freqResolution*(frequencyBinIndex - 1) - (freqResolution/Nshifts)*(freqShift-1);
         acqResults.codePhase(PRN) = codePhase;
+
         % ========== Find the L2CL code phase ===========         
         % Using detected CM code phase
         signal0DC = longSignal(codePhase:(codePhase + samplesPerCode-1));
@@ -129,7 +130,7 @@ for PRN = settings.acqSatelliteList
             phasePointsCL = (0 : (samplesPerCode-1)) * 2 * pi * ts;
             
             % Generate local sine and cosine
-            sigCarr = exp( 1i* acqResults.carrFreq(PRN) * phasePointsCL);
+            sigCarr = exp(-1i* acqResults.carrFreq(PRN) * phasePointsCL);
             
             CLCode = generateCLcode(PRN,settings);
             

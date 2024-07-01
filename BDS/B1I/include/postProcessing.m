@@ -136,7 +136,7 @@ if (fid > 0)
 
 %% Calculate navigation solutions =========================================
     disp('   Calculating navigation solutions...');
-    [navResults, ~] = postNavigation(trkResults, settings);
+    [navResults, eph] = postNavigation(trkResults, settings);
     save("navResults")
     disp('   Processing is complete for this data block');
 
