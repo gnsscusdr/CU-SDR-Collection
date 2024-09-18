@@ -1,4 +1,4 @@
-<img src="https://www.colorado.edu/static/brand-assets/live/images/cu-boulder-logo-text-black.svg" width="400" height="100">
+<img src="https://www.colorado.edu/profiles/express/themes/ucb/images/cu-boulder-logo-text-white.svg" width="400" height="100">
 
 # :satellite: OS GNSS SDR Collection :satellite:
 
